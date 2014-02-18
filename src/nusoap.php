@@ -4565,11 +4565,11 @@ class nusoap_server extends nusoap_base
         if (!$soapaction) {
             if (isset($_SERVER)) {
                 $SERVER_NAME = $_SERVER['SERVER_NAME'];
-                $SCRIPT_NAME = isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
+                $SCRIPT_NAME = $_SERVER['SCRIPT_NAME'];
                 $HTTPS = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : (isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off');
             } elseif (isset($HTTP_SERVER_VARS)) {
                 $SERVER_NAME = $HTTP_SERVER_VARS['SERVER_NAME'];
-                $SCRIPT_NAME = isset($HTTP_SERVER_VARS['PHP_SELF']) ? $HTTP_SERVER_VARS['PHP_SELF'] : $HTTP_SERVER_VARS['SCRIPT_NAME'];
+                $SCRIPT_NAME = $HTTP_SERVER_VARS['SCRIPT_NAME'];
                 $HTTPS = isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off';
             } else {
                 $this->setError("Neither _SERVER nor HTTP_SERVER_VARS is available");
@@ -4649,12 +4649,12 @@ class nusoap_server extends nusoap_base
         if (isset($_SERVER)) {
             $SERVER_NAME = $_SERVER['SERVER_NAME'];
             $SERVER_PORT = $_SERVER['SERVER_PORT'];
-            $SCRIPT_NAME = isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
+            $SCRIPT_NAME = $_SERVER['SCRIPT_NAME'];
             $HTTPS = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : (isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off');
         } elseif (isset($HTTP_SERVER_VARS)) {
             $SERVER_NAME = $HTTP_SERVER_VARS['SERVER_NAME'];
             $SERVER_PORT = $HTTP_SERVER_VARS['SERVER_PORT'];
-            $SCRIPT_NAME = isset($HTTP_SERVER_VARS['PHP_SELF']) ? $HTTP_SERVER_VARS['PHP_SELF'] : $HTTP_SERVER_VARS['SCRIPT_NAME'];
+            $SCRIPT_NAME = $HTTP_SERVER_VARS['SCRIPT_NAME'];
             $HTTPS = isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off';
         } else {
             $this->setError("Neither _SERVER nor HTTP_SERVER_VARS is available");
@@ -5597,7 +5597,7 @@ class wsdl extends nusoap_base
 			<br><br>
 			<div class=title>' . $this->serviceName . '</div>
 			<div class=nav>
-				<p>View the <a href="' . $PHP_SELF . '?wsdl">WSDL</a> for the service.
+				<p>View the <a href="?wsdl">WSDL</a> for the service.
 				Click on an operation name to view it&apos;s details.</p>
 				<ul>';
         foreach ($this->getOperations() as $op => $data) {
