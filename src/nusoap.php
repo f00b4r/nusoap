@@ -4104,6 +4104,10 @@ class nusoap_server extends nusoap_base
             } else {
                 $this->debug("in invoke_method, class=$try_class not found");
             }
+        } elseif (strlen($delim) > 0 && substr_count($this->methodname, $delim) > 1) {
+            $split = explode($delim, $this->methodname);
+            $method = array_pop($split);
+            $class = implode('\\', $split);
         } else {
             $try_class = '';
             $this->debug("in invoke_method, no class to try");
