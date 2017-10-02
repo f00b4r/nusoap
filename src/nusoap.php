@@ -7600,7 +7600,11 @@ class nusoap_client extends nusoap_base
                 $this->fault = TRUE;
                 foreach ($return as $k => $v) {
                     $this->$k = $v;
-                    $this->debug("$k = $v<br>");
+                    if (is_array($v)) {
+                        $this->debug("$k = " . json_encode($v));
+                    } else {
+                        $this->debug("$k = $v<br>");
+                    }
                 }
                 return $return;
             } elseif ($style == 'document') {
