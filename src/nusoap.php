@@ -2368,10 +2368,12 @@ class soap_transport_http extends nusoap_base
      */
     function io_method()
     {
-        if ($this->use_curl || ($this->scheme == 'https') || ($this->scheme == 'http' && $this->authtype == 'ntlm') || ($this->scheme == 'http' && is_array($this->proxy) && $this->proxy['authtype'] == 'ntlm'))
+        if ($this->use_curl || ($this->scheme == 'https') || ($this->scheme == 'http' && $this->authtype == 'ntlm') || ($this->scheme == 'http' && is_array($this->proxy) && $this->proxy['authtype'] == 'ntlm')) {
             return 'curl';
-        if (($this->scheme == 'http' || $this->scheme == 'ssl') && $this->authtype != 'ntlm' && (!is_array($this->proxy) || $this->proxy['authtype'] != 'ntlm'))
+        }
+        if (($this->scheme == 'http' || $this->scheme == 'ssl') && $this->authtype != 'ntlm' && (!is_array($this->proxy) || $this->proxy['authtype'] != 'ntlm')) {
             return 'socket';
+        }
         return 'unknown';
     }
 
@@ -2456,30 +2458,36 @@ class soap_transport_http extends nusoap_base
                 return false;
             }
             // Avoid warnings when PHP does not have these options
-            if (defined('CURLOPT_CONNECTIONTIMEOUT'))
+            if (defined('CURLOPT_CONNECTIONTIMEOUT')) {
                 $CURLOPT_CONNECTIONTIMEOUT = CURLOPT_CONNECTIONTIMEOUT;
-            else
+            } else {
                 $CURLOPT_CONNECTIONTIMEOUT = 78;
-            if (defined('CURLOPT_HTTPAUTH'))
+            }
+            if (defined('CURLOPT_HTTPAUTH')) {
                 $CURLOPT_HTTPAUTH = CURLOPT_HTTPAUTH;
-            else
+            } else {
                 $CURLOPT_HTTPAUTH = 107;
-            if (defined('CURLOPT_PROXYAUTH'))
+            }
+            if (defined('CURLOPT_PROXYAUTH')) {
                 $CURLOPT_PROXYAUTH = CURLOPT_PROXYAUTH;
-            else
+            } else {
                 $CURLOPT_PROXYAUTH = 111;
-            if (defined('CURLAUTH_BASIC'))
+            }
+            if (defined('CURLAUTH_BASIC')) {
                 $CURLAUTH_BASIC = CURLAUTH_BASIC;
-            else
+            } else {
                 $CURLAUTH_BASIC = 1;
-            if (defined('CURLAUTH_DIGEST'))
+            }
+            if (defined('CURLAUTH_DIGEST')) {
                 $CURLAUTH_DIGEST = CURLAUTH_DIGEST;
-            else
+            } else {
                 $CURLAUTH_DIGEST = 2;
-            if (defined('CURLAUTH_NTLM'))
+            }
+            if (defined('CURLAUTH_NTLM')) {
                 $CURLAUTH_NTLM = CURLAUTH_NTLM;
-            else
+            } else {
                 $CURLAUTH_NTLM = 8;
+            }
 
             $this->debug('connect using cURL');
             // init CURL
@@ -2829,7 +2837,9 @@ class soap_transport_http extends nusoap_base
             'HTTP/1.0 200 Connection established');
         foreach ($skipHeaders as $hd) {
             $prefix = substr($data, 0, strlen($hd));
-            if ($prefix == $hd) return true;
+            if ($prefix == $hd) {
+                return true;
+            }
         }
 
         return false;
@@ -4775,8 +4785,9 @@ class wsdl extends nusoap_base
         $this->proxypassword = $proxypassword;
         $this->timeout = $timeout;
         $this->response_timeout = $response_timeout;
-        if (is_array($curl_options))
+        if (is_array($curl_options)) {
             $this->curl_options = $curl_options;
+        }
         $this->use_curl = $use_curl;
         $this->fetchWSDL($wsdl);
     }
@@ -7475,8 +7486,9 @@ class nusoap_client extends nusoap_base
         }
         if ($this->endpointType == 'wsdl' && is_null($this->wsdl)) {
             $this->loadWSDL();
-            if ($this->getError())
+            if ($this->getError()) {
                 return false;
+            }
         }
         // serialize parameters
         if ($this->endpointType == 'wsdl' && $opData = $this->getOperationData($operation)) {
@@ -7697,8 +7709,9 @@ class nusoap_client extends nusoap_base
     {
         if ($this->endpointType == 'wsdl' && is_null($this->wsdl)) {
             $this->loadWSDL();
-            if ($this->getError())
+            if ($this->getError()) {
                 return false;
+            }
         }
         if (isset($this->operations[$operation])) {
             return $this->operations[$operation];
