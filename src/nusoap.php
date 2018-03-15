@@ -5058,6 +5058,10 @@ class wsdl extends nusoap_base
             } else {
                 $attrs = array();
             }
+		// Set default prefix and namespace
+		// to prevent error Undefined variable $prefix and $namespace if (preg_match('/:/', $name)) return 0 or FALSE
+		$prefix = '';
+		$namespace = '';
             // get element prefix, namespace and name
             if (preg_match('/:/', $name)) {
                 // get ns prefix
