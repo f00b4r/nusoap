@@ -6698,7 +6698,7 @@ class nusoap_parser extends nusoap_base
     public $position = 0;
     public $depth = 0;
     public $default_namespace = '';
-    public $namespaces = [];
+//    public $namespaces = []; //Field 'namespaces' is already defined in \nusoap_base
     public $message = [];
     public $parent = '';
     public $fault = false;
