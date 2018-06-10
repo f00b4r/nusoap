@@ -757,7 +757,7 @@ class nusoap_base
      * @return    string contracted qname
      * @access   private
      */
-    public function contractQname($qname)
+    public function contractQName($qname)
     {
         // get element namespace
         //$this->xdebug("Contract $qname");
