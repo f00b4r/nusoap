@@ -3750,7 +3750,7 @@ class nusoap_server extends nusoap_base
         } elseif (isset($_SERVER['QUERY_STRING'])) {
             $qs = explode('&', $_SERVER['QUERY_STRING']);
             foreach ($qs as $v) {
-                if ('debug=' === substr($v, 0, 6)) {
+                if (0 === strpos($v, 'debug=')) {
                     $this->debug('In nusoap_server, set debug_flag=' . substr($v, 6) . ' based on query string #1');
                     $this->debug_flag = substr($v, 6);
                 }
@@ -3758,7 +3758,7 @@ class nusoap_server extends nusoap_base
         } elseif (isset($HTTP_SERVER_VARS['QUERY_STRING'])) {
             $qs = explode('&', $HTTP_SERVER_VARS['QUERY_STRING']);
             foreach ($qs as $v) {
-                if ('debug=' === substr($v, 0, 6)) {
+                if (0 === strpos($v, 'debug=')) {
                     $this->debug('In nusoap_server, set debug_flag=' . substr($v, 6) . ' based on query string #2');
                     $this->debug_flag = substr($v, 6);
                 }
@@ -3910,7 +3910,7 @@ class nusoap_server extends nusoap_base
         } elseif (isset($_SERVER) && is_array($_SERVER)) {
             $this->debug('In parse_http_headers, use _SERVER');
             foreach ($_SERVER as $k => $v) {
-                if ('HTTP_' === substr($k, 0, 5)) {
+                if (0 === strpos($k, 'HTTP_')) {
                     $k = str_replace(' ', '-', strtolower(str_replace('_', ' ', substr($k, 5))));
                 } else {
                     $k = str_replace(' ', '-', strtolower(str_replace('_', ' ', $k)));
@@ -3944,7 +3944,7 @@ class nusoap_server extends nusoap_base
         } elseif (is_array($HTTP_SERVER_VARS)) {
             $this->debug('In parse_http_headers, use HTTP_SERVER_VARS');
             foreach ($HTTP_SERVER_VARS as $k => $v) {
-                if ('HTTP_' === substr($k, 0, 5)) {
+                if (0 === strpos($k, 'HTTP_')) {
                     $k = str_replace(' ', '-', strtolower(str_replace('_', ' ', substr($k, 5))));
                     $k = strtolower(substr($k, 5));
                 } else {
@@ -4128,7 +4128,7 @@ class nusoap_server extends nusoap_base
                 return;
             }
         } else {
-            $method_to_compare = ('4.' === substr(phpversion(), 0, 2)) ? strtolower($method) : $method;
+            $method_to_compare = (0 === strpos(phpversion(), '4.')) ? strtolower($method) : $method;
             if (!in_array($method_to_compare, get_class_methods($class))) {
                 $this->debug("in invoke_method, method '$this->methodname' not found in class '$class'!");
                 $this->result = 'fault: method not found';
