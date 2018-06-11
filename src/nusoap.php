@@ -2781,11 +2781,11 @@ class soap_transport_http extends nusoap_base
     /**
      * set proxy info here
      *
-     * @param    string $proxyhost use an empty string to remove proxy
-     * @param    string $proxyport
-     * @param    string $proxyusername
-     * @param    string $proxypassword
-     * @param    string $proxyauthtype (basic|ntlm)
+     * @param    bool|string $proxyhost use an empty string to remove proxy
+     * @param    bool|string $proxyport
+     * @param    bool|string $proxyusername
+     * @param    bool|string $proxypassword
+     * @param    bool|string $proxyauthtype (basic|ntlm)
      * @access   public
      */
     public function setProxy($proxyhost, $proxyport, $proxyusername = '', $proxypassword = '', $proxyauthtype = 'basic')
@@ -6722,7 +6722,7 @@ class nusoap_parser extends nusoap_base
      *
      * @param    string $xml         SOAP message
      * @param    string $encoding    character encoding scheme of message
-     * @param    string $method      method for which XML is parsed (unused?)
+     * @param    string|array $method      method for which XML is parsed (unused?)
      * @param    bool|string $decode_utf8 whether to decode UTF-8 to ISO-8859-1
      * @access   public
      */
@@ -7385,7 +7385,7 @@ class nusoap_client extends nusoap_base
      * fault related variables
      */
     /**
-     * @var  string    $fault
+     * @var  string|bool    $fault
      * @access   public
      */
     public $fault;
