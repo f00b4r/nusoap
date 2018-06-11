@@ -1141,13 +1141,13 @@ class nusoap_xmlschema extends nusoap_base
     public $attributes = [];
     public $complexTypes = [];
     public $complexTypeStack = [];
-    public $currentComplexType = null;
+    public $currentComplexType;
     public $elements = [];
     public $elementStack = [];
-    public $currentElement = null;
+    public $currentElement;
     public $simpleTypes = [];
     public $simpleTypeStack = [];
-    public $currentSimpleType = null;
+    public $currentSimpleType;
     // imports
     public $imports = [];
     // parser vars
@@ -2237,7 +2237,7 @@ class soap_transport_http extends nusoap_base
     public $ch = false;    // cURL handle
     public $ch_options = [];    // cURL custom options
     public $use_curl = false;        // force cURL use
-    public $proxy = null;            // proxy information (associative array)
+    public $proxy;            // proxy information (associative array)
     public $username = '';
     public $password = '';
     public $authtype = '';
@@ -3579,7 +3579,7 @@ class nusoap_server extends nusoap_base
      * @var mixed
      * @access public
      */
-    public $requestHeader = null;
+    public $requestHeader;
     /**
      * SOAP body request portion (incomplete namespace resolution; special characters not escaped) (text)
      *
@@ -6702,8 +6702,8 @@ class nusoap_parser extends nusoap_base
     public $fault_detail = '';
     public $depth_array = [];
     public $debug_flag = true;
-    public $soapresponse = null;    // parsed SOAP Body
-    public $soapheader = null;        // parsed SOAP Header
+    public $soapresponse;    // parsed SOAP Body
+    public $soapheader;        // parsed SOAP Header
     public $responseHeaders = '';    // incoming SOAP headers (text)
     public $body_position = 0;
     // for multiref parsing:
@@ -7352,7 +7352,7 @@ class nusoap_client extends nusoap_base
     public $certRequest = [];        // Certificate for HTTP SSL authentication
     public $requestHeaders = false;    // SOAP headers in request (text)
     public $responseHeaders = '';        // SOAP headers from response (incomplete namespace resolution) (text)
-    public $responseHeader = null;        // SOAP Header from response (parsed)
+    public $responseHeader;        // SOAP Header from response (parsed)
     public $document = '';                // SOAP body response portion (incomplete namespace resolution) (text)
     public $endpoint;
     public $forceEndpoint = '';        // overrides WSDL endpoint
