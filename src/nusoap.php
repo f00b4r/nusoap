@@ -601,7 +601,7 @@ class nusoap_base
                             $xml .= $this->serialize_val($v, 'item', false, false, false, false, $use);
                             ++$i;
                         }
-                        if (count($array_types) > 1) {
+                        if (is_array($array_types) && count($array_types) > 1) {
                             $array_typename = 'xsd:anyType';
                         } elseif (isset($tt) && isset($this->typemap[$this->XMLSchemaVersion][$tt])) {
                             if ('integer' === $tt) {
@@ -1317,7 +1317,7 @@ class nusoap_xmlschema extends nusoap_base
         }
 
         // loop thru attributes, expanding, and registering namespace declarations
-        if (count($attrs) > 0) {
+        if (is_array($attrs) && count($attrs) > 0) {
             foreach ($attrs as $k => $v) {
                 // if ns declarations, add to class level array of valid namespaces
                 if (preg_match('/^xmlns/', $k)) {
@@ -1677,7 +1677,7 @@ class nusoap_xmlschema extends nusoap_base
         $schemaPrefix = $this->getPrefixFromNamespace($this->XMLSchemaVersion);
         $xml = '';
         // imports
-        if (count($this->imports) > 0) {
+        if (is_array($this->imports) && count($this->imports) > 0) {
             foreach ($this->imports as $ns => $list) {
                 foreach ($list as $ii) {
                     if ('' != $ii['location']) {
@@ -1932,7 +1932,7 @@ class nusoap_xmlschema extends nusoap_base
                 }
             }
             $str .= ' xmlns="' . $this->schema['targetNamespace'] . '"';
-            if (count($typeDef['elements']) > 0) {
+            if (is_array($typeDef['elements']) && count($typeDef['elements']) > 0) {
                 $str .= '>';
                 foreach ($typeDef['elements'] as $element => $eData) {
                     $str .= $this->serializeTypeDef($element);
@@ -3077,7 +3077,7 @@ class soap_transport_http extends nusoap_base
             $this->incoming_cookies = [];
             foreach ($header_array as $header_line) {
                 $arr = explode(':', $header_line, 2);
-                if (count($arr) > 1) {
+                if (is_array($arr) && count($arr) > 1) {
                     $header_name = strtolower(trim($arr[0]));
                     $this->incoming_headers[$header_name] = trim($arr[1]);
                     if ('set-cookie' === $header_name) {
@@ -3255,7 +3255,7 @@ class soap_transport_http extends nusoap_base
             // clean headers
             foreach ($header_array as $header_line) {
                 $arr = explode(':', $header_line, 2);
-                if (count($arr) > 1) {
+                if (is_array($arr) && count($arr) > 1) {
                     $header_name = strtolower(trim($arr[0]));
                     $this->incoming_headers[$header_name] = trim($arr[1]);
                     if ('set-cookie' === $header_name) {
@@ -4235,7 +4235,7 @@ class nusoap_server extends nusoap_base
             $this->debug('got a(n) ' . gettype($this->methodreturn) . ' from method');
             $this->debug('serializing return value');
             if ($this->wsdl) {
-                if (count($this->opData['output']['parts']) > 1) {
+                if (is_array($this->opData['output']['parts']) && count($this->opData['output']['parts']) > 1) {
                     $this->debug('more than one output part, so use the method return unchanged');
                     $opParams = $this->methodreturn;
                 } elseif (1 == count($this->opData['output']['parts'])) {
@@ -5034,7 +5034,7 @@ class wsdl extends nusoap_base
             $this->depth_array[$depth] = $pos;
             $this->message[$pos] = ['cdata' => ''];
             // process attributes
-            if (count($attrs) > 0) {
+            if (is_array($attrs) && count($attrs) > 0) {
                 // register namespace declarations
                 foreach ($attrs as $k => $v) {
                     if (preg_match('/^xmlns/', $k)) {
@@ -5631,7 +5631,7 @@ class wsdl extends nusoap_base
         }
         $xml .= '>';
         // imports
-        if (count($this->import) > 0) {
+        if (is_array($this->import) && count($this->import) > 0) {
             foreach ($this->import as $ns => $list) {
                 foreach ($list as $ii) {
                     if ('' != $ii['location']) {
@@ -5643,7 +5643,7 @@ class wsdl extends nusoap_base
             }
         }
         // types
-        if (count($this->schemas) >= 1) {
+        if (is_array($this->schemas) && count($this->schemas) >= 1) {
             $xml .= "\n<types>\n";
             foreach ($this->schemas as $ns => $list) {
                 foreach ($list as $xs) {
@@ -5653,7 +5653,7 @@ class wsdl extends nusoap_base
             $xml .= '</types>';
         }
         // messages
-        if (count($this->messages) >= 1) {
+        if (is_array($this->messages) && count($this->messages) >= 1) {
             foreach ($this->messages as $msgName => $msgParts) {
                 $xml .= "\n<message name=\"" . $msgName . '">';
                 if (is_array($msgParts)) {
@@ -5692,7 +5692,7 @@ class wsdl extends nusoap_base
             }
         }
         // bindings & porttypes
-        if (count($this->bindings) >= 1) {
+        if (is_array($this->bindings) && count($this->bindings) >= 1) {
             $binding_xml = '';
             $portType_xml = '';
             foreach ($this->bindings as $bindingName => $attrs) {
@@ -5734,7 +5734,7 @@ class wsdl extends nusoap_base
         }
         // services
         $xml .= "\n<service name=\"" . $this->serviceName . '">';
-        if (count($this->ports) >= 1) {
+        if (is_array($this->ports) && count($this->ports) >= 1) {
             foreach ($this->ports as $pName => $attrs) {
                 $xml .= "\n" . '  <port name="' . $pName . '" binding="tns:' . $attrs['binding'] . '">';
                 $xml .= "\n" . '    <soap:address location="' . $attrs['location'] . ($debug ? '?debug=1' : '') . '"/>';
@@ -6428,7 +6428,7 @@ class wsdl extends nusoap_base
                 $xvalue = [];
             }
             // toggle whether all elements are present - ideally should validate against schema
-            if (count($typeDef['elements']) != count($xvalue)) {
+            if (is_array($xvalue) && (count($typeDef['elements']) != count($xvalue))) {
                 $optionals = true;
             }
             foreach ($typeDef['elements'] as $eName => $attrs) {
@@ -6511,7 +6511,7 @@ class wsdl extends nusoap_base
      */
     public function addComplexType($name, $typeClass = 'complexType', $phpType = 'array', $compositor = '', $restrictionBase = '', $elements = [], $attrs = [], $arrayType = '')
     {
-        if (count($elements) > 0) {
+        if (is_array($elements) && count($elements) > 0) {
             $eElements = [];
             foreach ($elements as $n => $e) {
                 // expand each element
@@ -6526,7 +6526,7 @@ class wsdl extends nusoap_base
             $elements = $eElements;
         }
 
-        if (count($attrs) > 0) {
+        if (is_array($attrs) && count($attrs) > 0) {
             foreach ($attrs as $n => $a) {
                 // expand each attribute
                 foreach ($a as $k => $v) {
@@ -6791,7 +6791,7 @@ class nusoap_parser extends nusoap_base
                     $this->soapheader = $this->message[$this->root_header]['result'];
                 }
                 // resolve hrefs/ids
-                if (count($this->multirefs) > 0) {
+                if (is_array($this->multirefs) && count($this->multirefs) > 0) {
                     foreach ($this->multirefs as $id => $hrefs) {
                         $this->debug('resolving multirefs for id: ' . $id);
                         $idVal = $this->buildVal($this->ids[$id]);
@@ -7643,7 +7643,7 @@ class nusoap_client extends nusoap_base
                 if (is_array($return)) {
                     // multiple 'out' parameters, which we return wrapped up
                     // in the array
-                    if (count($return) > 1) {
+                    if (is_array($return) && count($return) > 1) {
                         return $return;
                     }
                     // single 'out' parameter (normally the return value)
@@ -8113,7 +8113,7 @@ class nusoap_client extends nusoap_base
         foreach ($this->operations as $operation => $opData) {
             if ('' != $operation) {
                 // create param string and param comment string
-                if (count($opData['input']['parts']) > 0) {
+                if (is_array($opData['input']['parts']) && count($opData['input']['parts']) > 0) {
                     $paramStr = '';
                     $paramArrayStr = '';
                     $paramCommentStr = '';
@@ -8282,7 +8282,7 @@ class nusoap_client extends nusoap_base
     {
         if (0 == count($this->cookies)) {
             // no existing cookies: take whatever is new
-            if (count($cookies) > 0) {
+            if (is_array($cookies) && count($cookies) > 0) {
                 $this->debug('Setting new cookie(s)');
                 $this->cookies = $cookies;
             }
