@@ -1291,7 +1291,7 @@ class nusoap_xmlschema extends nusoap_base
      *
      * @param    string $parser XML parser object
      * @param    string $name element name
-     * @param    string $attrs associative array of attributes
+     * @param    string|array $attrs associative array of attributes
      * @access   private
      */
     public function schemaStartElement($parser, $name, $attrs)
@@ -3494,7 +3494,7 @@ class soap_transport_http extends nusoap_base
     /**
      * sort out cookies for the current request
      *
-     * @param    array $cookies array with all cookies
+     * @param    array|null $cookies array with all cookies
      * @param    boolean $secure is the send-content secure or not?
      * @return    string for Cookie-HTTP-Header
      * @access    private
@@ -5010,7 +5010,7 @@ class wsdl extends nusoap_base
      *
      * @param string $parser XML parser object
      * @param string $name element name
-     * @param string $attrs associative array of attributes
+     * @param string|array $attrs associative array of attributes
      * @access private
      */
     private function start_element($parser, $name, $attrs)
