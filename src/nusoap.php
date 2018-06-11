@@ -322,7 +322,7 @@ class nusoap_base
     /**
      * gets the current debug data for this instance
      *
-     * @return   debug data
+     * @return   string debug data
      * @access   public
      */
     public function &getDebug()
@@ -336,7 +336,7 @@ class nusoap_base
      * gets the current debug data for this instance as an XML comment
      * this may change the contents of the debug data
      *
-     * @return   debug data as an XML comment
+     * @return   string debug data as an XML comment
      * @access   public
      */
     public function &getDebugAsXMLComment()
@@ -2016,7 +2016,7 @@ class nusoap_xmlschema extends nusoap_base
      *    array('myVar'=> array('name'=>'myVar','type'=>'string')
      * );
      *
-     * @param name
+     * @param string name
      * @param typeClass (complexType|simpleType|attribute)
      * @param phpType : currently supported are array and struct (php assoc array)
      * @param compositor (all|sequence|choice)
