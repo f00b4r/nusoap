@@ -385,7 +385,8 @@ class nusoap_base
     /**
      * sets error string
      *
-     * @return   boolean $string error string
+     * @param string $str
+     * @return void $string error string
      * @access   private
      */
     protected function setError($str)
@@ -415,14 +416,14 @@ class nusoap_base
      * serializes PHP values in accordance w/ section 5. Type information is
      * not serialized if $use == 'literal'.
      *
-     * @param    mixed   $val        The value to serialize
-     * @param    string $name The name (local part) of the XML element
-     * @param    string $type The XML schema type (local part) for the element
-     * @param    string $name_ns The namespace for the name of the XML element
-     * @param    string $type_ns The namespace for the type of the element
-     * @param    array $attributes The attributes to serialize as name=>value pairs
-     * @param    string  $use        The WSDL "use" (encoded|literal)
-     * @param    boolean $soapval    Whether this is called from soapval.
+     * @param    mixed    $val        The value to serialize
+     * @param bool|string $name       The name (local part) of the XML element
+     * @param bool|string $type       The XML schema type (local part) for the element
+     * @param bool|string $name_ns    The namespace for the name of the XML element
+     * @param bool|string $type_ns    The namespace for the type of the element
+     * @param bool|string|array $attributes The attributes to serialize as name=>value pairs
+     * @param    string   $use        The WSDL "use" (encoded|literal)
+     * @param    boolean  $soapval    Whether this is called from soapval.
      * @return    string    The serialized element, possibly with child elements
      * @access    public
      */
@@ -1161,9 +1162,9 @@ class nusoap_xmlschema extends nusoap_base
     /**
      * constructor
      *
-     * @param    string $schema     schema document URI
-     * @param    string $xml        xml document URI
-     * @param    string $namespaces namespaces defined in enclosing XML
+     * @param string $schema     schema document URI
+     * @param string $xml        xml document URI
+     * @param array  $namespaces namespaces defined in enclosing XML
      * @access   public
      */
     public function __construct($schema = '', $xml = '', $namespaces = [])
@@ -2016,18 +2017,18 @@ class nusoap_xmlschema extends nusoap_base
      * );
      *
      * @param string name
-     * @param typeClass (complexType|simpleType|attribute)
-     * @param phpType : currently supported are array and struct (php assoc array)
-     * @param compositor (all|sequence|choice)
-     * @param restrictionBase namespace:name (http://schemas.xmlsoap.org/soap/encoding/:Array)
-     * @param elements = array ( name = array(name=>'',type=>'') )
-     * @param attrs = array(
+     * @param string typeClass (complexType|simpleType|attribute)
+     * @param string phpType : currently supported are array and struct (php assoc array)
+     * @param string $compositor (all|sequence|choice)
+     * @param string $restrictionBase namespace:name (http://schemas.xmlsoap.org/soap/encoding/:Array)
+     * @param array $elements = array ( name = array(name=>'',type=>'') )
+     * @param array $attrs = array(
      *    array(
      *        'ref' => "http://schemas.xmlsoap.org/soap/encoding/:arrayType",
      *        "http://schemas.xmlsoap.org/wsdl/:arrayType" => "string[]"
      *    )
      * )
-     * @param arrayType : namespace:name (http://www.w3.org/2001/XMLSchema:string)
+     * @param string arrayType : namespace:name (http://www.w3.org/2001/XMLSchema:string)
      * @access public
      * @see    getTypeDef
      */
@@ -2379,10 +2380,10 @@ class soap_transport_http extends nusoap_base
     /**
      * establish an HTTP connection
      *
-     * @param    integer $timeout set connection timeout in seconds
-     * @param    integer $response_timeout set response timeout in seconds
-     * @return    boolean true if connected, false if not
-     * @access   private
+     * @param int $connection_timeout set connection timeout in seconds
+     * @param int $response_timeout   set response timeout in seconds
+     * @return bool true if connected, false if not
+     * @access private
      */
     private function connect($connection_timeout = 0, $response_timeout = 30)
     {
@@ -4768,10 +4769,10 @@ class wsdl extends nusoap_base
      * constructor
      *
      * @param string  $wsdl             WSDL document URL
-     * @param string $proxyhost
-     * @param string $proxyport
-     * @param string $proxyusername
-     * @param string $proxypassword
+     * @param bool|string $proxyhost
+     * @param bool|string $proxyport
+     * @param bool|string $proxyusername
+     * @param bool|string $proxypassword
      * @param integer $timeout          set the connection timeout
      * @param integer $response_timeout set the response timeout
      * @param array   $curl_options     user-specified cURL options
@@ -4799,6 +4800,7 @@ class wsdl extends nusoap_base
      * fetches the WSDL document and parses it
      *
      * @access public
+     * @param $wsdl
      */
     public function fetchWSDL($wsdl)
     {
@@ -5292,6 +5294,10 @@ class wsdl extends nusoap_base
         $this->certRequest = $certRequest;
     }
 
+    /**
+     * @param $binding
+     * @return mixed
+     */
     public function getBindingData($binding)
     {
         if (is_array($this->bindings[$binding])) {
@@ -6013,8 +6019,8 @@ class wsdl extends nusoap_base
      * @param string  $type          XML schema type of value (type or element)
      * @param mixed   $value         a native PHP value (parameter value)
      * @param string  $use           use for part (encoded|literal)
-     * @param string $encodingStyle SOAP encoding style for the value (if different than the enclosing style)
-     * @param boolean $unqualified   a kludge for what should be XML namespace form handling
+     * @param bool|string $encodingStyle SOAP encoding style for the value (if different than the enclosing style)
+     * @param bool $unqualified   a kludge for what should be XML namespace form handling
      * @return string value serialized as an XML string
      * @access private
      */
@@ -6396,7 +6402,7 @@ class wsdl extends nusoap_base
      * @param string $ns            the namespace of the type
      * @param string $uqType        the local part of the type
      * @param string $use           use for part (encoded|literal)
-     * @param string $encodingStyle SOAP encoding style for the value (if different than the enclosing style)
+     * @param bool|string $encodingStyle SOAP encoding style for the value (if different than the enclosing style)
      * @return string value serialized as an XML string
      * @access private
      */
@@ -6581,15 +6587,15 @@ class wsdl extends nusoap_base
     /**
      * register an operation with the server
      *
-     * @param string $name          operation (method) name
-     * @param array $in assoc array of input values: key = param name, value = param type
-     * @param array $out assoc array of output values: key = param name, value = param type
-     * @param string $namespace optional The namespace for the operation
-     * @param string $soapaction optional The soapaction for the operation
-     * @param string $style         (rpc|document) optional The style for the operation Note: when 'document' is specified, parameter and return wrappers are created for you automatically
-     * @param string $use           (encoded|literal) optional The use for the parameters (cannot mix right now)
-     * @param string $documentation optional The description to include in the WSDL
-     * @param string $encodingStyle optional (usually 'http://schemas.xmlsoap.org/soap/encoding/' for encoded)
+     * @param string      $name          operation (method) name
+     * @param bool|array  $in            assoc array of input values: key = param name, value = param type
+     * @param bool|array  $out           assoc array of output values: key = param name, value = param type
+     * @param bool|string $namespace     optional The namespace for the operation
+     * @param bool|string $soapaction    optional The soapaction for the operation
+     * @param string      $style         (rpc|document) optional The style for the operation Note: when 'document' is specified, parameter and return wrappers are created for you automatically
+     * @param string      $use           (encoded|literal) optional The use for the parameters (cannot mix right now)
+     * @param string      $documentation optional The description to include in the WSDL
+     * @param string      $encodingStyle optional (usually 'http://schemas.xmlsoap.org/soap/encoding/' for encoded)
      * @access public
      */
     public function addOperation($name, $in = false, $out = false, $namespace = false, $soapaction = false, $style = 'rpc', $use = 'encoded', $documentation = '', $encodingStyle = '')
@@ -6720,7 +6726,7 @@ class nusoap_parser extends nusoap_base
      * @param    string $xml         SOAP message
      * @param    string $encoding    character encoding scheme of message
      * @param    string $method      method for which XML is parsed (unused?)
-     * @param    string $decode_utf8 whether to decode UTF-8 to ISO-8859-1
+     * @param    bool|string $decode_utf8 whether to decode UTF-8 to ISO-8859-1
      * @access   public
      */
     public function __construct($xml, $encoding = 'UTF-8', $method = '', $decode_utf8 = true)
@@ -7407,10 +7413,10 @@ class nusoap_client extends nusoap_base
      *
      * @param    mixed   $endpoint         SOAP server or WSDL URL (string), or wsdl instance (object)
      * @param    mixed   $wsdl             optional, set to 'wsdl' or true if using WSDL
-     * @param    string $proxyhost optional
-     * @param    string $proxyport optional
-     * @param    string $proxyusername optional
-     * @param    string $proxypassword optional
+     * @param    bool|string $proxyhost optional
+     * @param    bool|string $proxyport optional
+     * @param    bool|string $proxyusername optional
+     * @param    bool|string $proxypassword optional
      * @param    integer $timeout          set the connection timeout
      * @param    integer $response_timeout set the response timeout
      * @param    string  $portName         optional portName in WSDL document
@@ -8090,6 +8096,7 @@ class nusoap_client extends nusoap_base
     /**
      * dynamically creates proxy class code
      *
+     * @param string $r
      * @return   string PHP/NuSOAP code for the proxy class
      * @access   private
      */
@@ -8204,6 +8211,10 @@ class nusoap_client extends nusoap_base
     * @return   always returns true
     * @access   public
     */
+    /**
+     * @param $bool
+     * @return bool
+     */
     public function decodeUTF8($bool)
     {
         $this->decode_utf8 = $bool;
