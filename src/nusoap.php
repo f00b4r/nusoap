@@ -355,6 +355,7 @@ class nusoap_base
      *
      * @param    string $val The string in which to expand entities.
      * @access    private
+     * @return mixed|string
      */
     protected function expandEntities($val)
     {
@@ -2815,7 +2816,6 @@ class soap_transport_http extends nusoap_base
         }
     }
 
-
     /**
      * Test if the given string starts with a header that is to be skipped.
      * Skippable headers result from chunked transfer and proxy requests.
@@ -2823,6 +2823,7 @@ class soap_transport_http extends nusoap_base
      * @param    string $data The string to check.
      * @returns    boolean    Whether a skippable header was found.
      * @access    private
+     * @return bool
      */
     private function isSkippableCurlHeader(&$data)
     {
@@ -2855,6 +2856,7 @@ class soap_transport_http extends nusoap_base
      * @returns    string
      * @access   public
      * @deprecated
+     * @return string
      */
     public function decodeChunked($buffer, $lb)
     {
@@ -4528,16 +4530,17 @@ class nusoap_server extends nusoap_base
     /**
      * register a service function with the server
      *
-     * @param    string $name the name of the PHP function, class.method or class..method
-     * @param    array $in assoc array of input values: key = param name, value = param type
-     * @param    array $out assoc array of output values: key = param name, value = param type
-     * @param    mixed $namespace the element namespace for the method or false
-     * @param    mixed $soapaction the soapaction for the method or false
-     * @param    mixed $style optional (rpc|document) or false Note: when 'document' is specified, parameter and return wrappers are created for you automatically
-     * @param    mixed $use optional (encoded|literal) or false
+     * @param    string $name          the name of the PHP function, class.method or class..method
+     * @param    array  $in            assoc array of input values: key = param name, value = param type
+     * @param    array  $out           assoc array of output values: key = param name, value = param type
+     * @param    mixed  $namespace     the element namespace for the method or false
+     * @param    mixed  $soapaction    the soapaction for the method or false
+     * @param    mixed  $style         optional (rpc|document) or false Note: when 'document' is specified, parameter and return wrappers are created for you automatically
+     * @param    mixed  $use           optional (encoded|literal) or false
      * @param    string $documentation optional Description to include in WSDL
      * @param    string $encodingStyle optional (usually 'http://schemas.xmlsoap.org/soap/encoding/' for encoded)
      * @access   public
+     * @return bool
      */
     public function register($name, $in = [], $out = [], $namespace = false, $soapaction = false, $style = false, $use = false, $documentation = '', $encodingStyle = '')
     {
@@ -4905,6 +4908,7 @@ class wsdl extends nusoap_base
      *
      * @param string $wsdl path or URL
      * @access private
+     * @return bool
      */
     private function parseWSDL($wsdl = '')
     {
@@ -6597,6 +6601,7 @@ class wsdl extends nusoap_base
      * @param string      $documentation optional The description to include in the WSDL
      * @param string      $encodingStyle optional (usually 'http://schemas.xmlsoap.org/soap/encoding/' for encoded)
      * @access public
+     * @return bool
      */
     public function addOperation($name, $in = false, $out = false, $namespace = false, $soapaction = false, $style = 'rpc', $use = 'encoded', $documentation = '', $encodingStyle = '')
     {
