@@ -3756,7 +3756,7 @@ class nusoap_server extends nusoap_base
         } elseif (isset($_SERVER['QUERY_STRING'])) {
             $qs = explode('&', $_SERVER['QUERY_STRING']);
             foreach ($qs as $v) {
-                if ('debug=' == substr($v, 0, 6)) {
+                if ('debug=' === substr($v, 0, 6)) {
                     $this->debug('In nusoap_server, set debug_flag=' . substr($v, 6) . ' based on query string #1');
                     $this->debug_flag = substr($v, 6);
                 }
@@ -3764,7 +3764,7 @@ class nusoap_server extends nusoap_base
         } elseif (isset($HTTP_SERVER_VARS['QUERY_STRING'])) {
             $qs = explode('&', $HTTP_SERVER_VARS['QUERY_STRING']);
             foreach ($qs as $v) {
-                if ('debug=' == substr($v, 0, 6)) {
+                if ('debug=' === substr($v, 0, 6)) {
                     $this->debug('In nusoap_server, set debug_flag=' . substr($v, 6) . ' based on query string #2');
                     $this->debug_flag = substr($v, 6);
                 }
@@ -3774,7 +3774,7 @@ class nusoap_server extends nusoap_base
         // wsdl
         if ($wsdl) {
             $this->debug('In nusoap_server, WSDL is specified');
-            if (is_object($wsdl) && ('wsdl' == get_class($wsdl))) {
+            if (is_object($wsdl) && ('wsdl' === get_class($wsdl))) {
                 $this->wsdl = $wsdl;
                 $this->externalWSDLURL = $this->wsdl->wsdl;
                 $this->debug('Use existing wsdl instance from ' . $this->externalWSDLURL);
@@ -3818,7 +3818,7 @@ class nusoap_server extends nusoap_base
         }
         $this->debug("In service, request method=$rm query string=$qs strlen(\$data)=" . strlen($data));
 
-        if ('POST' == $rm) {
+        if ('POST' === $rm) {
             $this->debug('In service, invoke the request');
             $this->parse_request($data);
             if (!$this->fault) {
@@ -3916,18 +3916,18 @@ class nusoap_server extends nusoap_base
         } elseif (isset($_SERVER) && is_array($_SERVER)) {
             $this->debug('In parse_http_headers, use _SERVER');
             foreach ($_SERVER as $k => $v) {
-                if ('HTTP_' == substr($k, 0, 5)) {
+                if ('HTTP_' === substr($k, 0, 5)) {
                     $k = str_replace(' ', '-', strtolower(str_replace('_', ' ', substr($k, 5))));
                 } else {
                     $k = str_replace(' ', '-', strtolower(str_replace('_', ' ', $k)));
                 }
-                if ('soapaction' == $k) {
+                if ('soapaction' === $k) {
                     // get SOAPAction header
                     $k = 'SOAPAction';
                     $v = str_replace('"', '', $v);
                     $v = str_replace('\\', '', $v);
                     $this->SOAPAction = $v;
-                } elseif ('content-type' == $k) {
+                } elseif ('content-type' === $k) {
                     // get the character encoding of the incoming request
                     if (strpos($v, '=')) {
                         $enc = substr(strstr($v, '='), 1);
@@ -3950,20 +3950,20 @@ class nusoap_server extends nusoap_base
         } elseif (is_array($HTTP_SERVER_VARS)) {
             $this->debug('In parse_http_headers, use HTTP_SERVER_VARS');
             foreach ($HTTP_SERVER_VARS as $k => $v) {
-                if ('HTTP_' == substr($k, 0, 5)) {
+                if ('HTTP_' === substr($k, 0, 5)) {
                     $k = str_replace(' ', '-', strtolower(str_replace('_', ' ', substr($k, 5))));
                     $k = strtolower(substr($k, 5));
                 } else {
                     $k = str_replace(' ', '-', strtolower(str_replace('_', ' ', $k)));
                     $k = strtolower($k);
                 }
-                if ('soapaction' == $k) {
+                if ('soapaction' === $k) {
                     // get SOAPAction header
                     $k = 'SOAPAction';
                     $v = str_replace('"', '', $v);
                     $v = str_replace('\\', '', $v);
                     $this->SOAPAction = $v;
-                } elseif ('content-type' == $k) {
+                } elseif ('content-type' === $k) {
                     // get the character encoding of the incoming request
                     if (strpos($v, '=')) {
                         $enc = substr(strstr($v, '='), 1);
@@ -4569,7 +4569,7 @@ class nusoap_server extends nusoap_base
             } else {
                 $this->setError('Neither _SERVER nor HTTP_SERVER_VARS is available');
             }
-            if ('1' == $HTTPS || 'on' == $HTTPS) {
+            if ('1' == $HTTPS || 'on' === $HTTPS) {
                 $SCHEME = 'https';
             } else {
                 $SCHEME = 'http';
@@ -4582,7 +4582,7 @@ class nusoap_server extends nusoap_base
         if (false == $use) {
             $use = 'encoded';
         }
-        if ('encoded' == $use && '' == $encodingStyle) {
+        if ('encoded' === $use && '' == $encodingStyle) {
             $encodingStyle = 'http://schemas.xmlsoap.org/soap/encoding/';
         }
 
@@ -4662,7 +4662,7 @@ class nusoap_server extends nusoap_base
         }
 
         if (false == $endpoint) {
-            if ('1' == $HTTPS || 'on' == $HTTPS) {
+            if ('1' == $HTTPS || 'on' === $HTTPS) {
                 $SCHEME = 'https';
             } else {
                 $SCHEME = 'http';
@@ -4684,7 +4684,7 @@ class nusoap_server extends nusoap_base
             $this->wsdl->namespaces['types'] = $schemaTargetNamespace;
         }
         $this->wsdl->schemas[$schemaTargetNamespace][0] = new nusoap_xmlschema('', '', $this->wsdl->namespaces);
-        if ('document' == $style) {
+        if ('document' === $style) {
             $this->wsdl->schemas[$schemaTargetNamespace][0]->schemaInfo['elementFormDefault'] = 'qualified';
         }
         $this->wsdl->schemas[$schemaTargetNamespace][0]->schemaTargetNamespace = $schemaTargetNamespace;
