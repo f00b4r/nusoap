@@ -8123,9 +8123,9 @@ class nusoap_client extends nusoap_base
                         $paramArrayStr .= "'$name' => \$$name, ";
                         $paramCommentStr .= "$type \$$name, ";
                     }
-                    $paramStr = substr($paramStr, 0, strlen($paramStr) - 2);
-                    $paramArrayStr = substr($paramArrayStr, 0, strlen($paramArrayStr) - 2);
-                    $paramCommentStr = substr($paramCommentStr, 0, strlen($paramCommentStr) - 2);
+                    $paramStr = substr($paramStr, 0, -2);
+                    $paramArrayStr = substr($paramArrayStr, 0, -2);
+                    $paramCommentStr = substr($paramCommentStr, 0, -2);
                 } else {
                     $paramStr = '';
                     $paramArrayStr = '';
