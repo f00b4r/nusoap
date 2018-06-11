@@ -3293,7 +3293,7 @@ class soap_transport_http extends nusoap_base
         // see if we need to resend the request with http digest authentication
         if (isset($this->incoming_headers['www-authenticate']) && 401 == $http_status) {
             $this->debug("Got 401 $http_reason with WWW-Authenticate: " . $this->incoming_headers['www-authenticate']);
-            if (strstr($this->incoming_headers['www-authenticate'], 'Digest ')) {
+            if (false !== strpos($this->incoming_headers['www-authenticate'], 'Digest ')) {
                 $this->debug('Server wants digest authentication');
                 // remove "Digest " from our elements
                 $digestString = str_replace('Digest ', '', $this->incoming_headers['www-authenticate']);
@@ -4354,7 +4354,7 @@ class nusoap_server extends nusoap_base
         // NOTE: there is no way to know whether the Web server will also compress
         // this data.
         if (strlen($payload) > 1024 && isset($this->headers) && isset($this->headers['accept-encoding'])) {
-            if (strstr($this->headers['accept-encoding'], 'gzip')) {
+            if (false !== strpos($this->headers['accept-encoding'], 'gzip')) {
                 if (function_exists('gzencode')) {
                     if (isset($this->debug_flag) && $this->debug_flag) {
                         $payload .= '<!-- Content being gzipped -->';
@@ -4366,7 +4366,7 @@ class nusoap_server extends nusoap_base
                         $payload .= '<!-- Content will not be gzipped: no gzencode -->';
                     }
                 }
-            } elseif (strstr($this->headers['accept-encoding'], 'deflate')) {
+            } elseif (false !== strpos($this->headers['accept-encoding'], 'deflate')) {
                 // Note: MSIE requires gzdeflate output (no Zlib header and checksum),
                 // instead of gzcompress output,
                 // which conflicts with HTTP 1.1 spec (http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.5)
@@ -4430,7 +4430,7 @@ class nusoap_server extends nusoap_base
             $this->setError('Request not of type text/xml (no content-type header)');
             return false;
         }
-        if (!strstr($headers['content-type'], 'text/xml')) {
+        if (false === strpos($headers['content-type'], 'text/xml')) {
             $this->setError('Request not of type text/xml');
             return false;
         }
@@ -7832,7 +7832,7 @@ class nusoap_client extends nusoap_base
             $this->setError('Response not of type text/xml (no content-type header)');
             return false;
         }
-        if (!strstr($headers['content-type'], 'text/xml')) {
+        if (false === strpos($headers['content-type'], 'text/xml')) {
             $this->setError('Response not of type text/xml: ' . $headers['content-type']);
             return false;
         }
