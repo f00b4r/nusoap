@@ -470,7 +470,7 @@ class nusoap_base
             }
         }
         // serialize null value
-        if (is_null($val)) {
+        if (null === $val) {
             $this->debug('serialize_val: serialize null');
             if ('literal' == $use) {
                 // TODO: depends on minOccurs
@@ -3502,7 +3502,7 @@ class soap_transport_http extends nusoap_base
     private function getCookiesForRequest($cookies, $secure = false)
     {
         $cookie_str = '';
-        if ((!is_null($cookies)) && (is_array($cookies))) {
+        if ((null !== $cookies) && (is_array($cookies))) {
             foreach ($cookies as $cookie) {
                 if (!is_array($cookie)) {
                     continue;
@@ -6074,7 +6074,7 @@ class wsdl extends nusoap_base
                 } else {
                     $elementNS = '';
                 }
-                if (is_null($value)) {
+                if (null === $value) {
                     if ('literal' == $use) {
                         // TODO: depends on minOccurs
                         $xml = "<$name$elementNS/>";
@@ -6194,7 +6194,7 @@ class wsdl extends nusoap_base
                     $elementNS = '';
                 }
             }
-            if (is_null($value)) {
+            if (null === $value) {
                 if ('literal' == $use) {
                     // TODO: depends on minOccurs and nillable
                     $xml = "<$elementName$elementNS/>";
@@ -6246,7 +6246,7 @@ class wsdl extends nusoap_base
                     $elementNS = '';
                 }
             }
-            if (is_null($value)) {
+            if (null === $value) {
                 if ('literal' == $use) {
                     // TODO: depends on minOccurs
                     $xml = "<$name$elementNS/>";
@@ -6474,9 +6474,9 @@ class wsdl extends nusoap_base
                             }
                         }
                     } else {
-                        if (is_null($v) && isset($attrs['minOccurs']) && '0' == $attrs['minOccurs']) {
+                        if (null === $v && isset($attrs['minOccurs']) && '0' == $attrs['minOccurs']) {
                             // do nothing
-                        } elseif (is_null($v) && isset($attrs['nillable']) && 'true' == $attrs['nillable']) {
+                        } elseif (null === $v && isset($attrs['nillable']) && 'true' == $attrs['nillable']) {
                             // TODO: serialize a nil correctly, but for now serialize schema-defined type
                             $xml .= $this->serializeType($eName, isset($attrs['type']) ? $attrs['type'] : $attrs['ref'], $v, $use, $encodingStyle, $unqualified);
                         } elseif (isset($attrs['type']) || isset($attrs['ref'])) {
@@ -7495,7 +7495,7 @@ class nusoap_client extends nusoap_base
         if ($headers) {
             $this->requestHeaders = $headers;
         }
-        if ('wsdl' == $this->endpointType && is_null($this->wsdl)) {
+        if ('wsdl' == $this->endpointType && null === $this->wsdl) {
             $this->loadWSDL();
             if ($this->getError()) {
                 return false;
@@ -7718,7 +7718,7 @@ class nusoap_client extends nusoap_base
      */
     public function getOperationData($operation)
     {
-        if ('wsdl' == $this->endpointType && is_null($this->wsdl)) {
+        if ('wsdl' == $this->endpointType && null === $this->wsdl) {
             $this->loadWSDL();
             if ($this->getError()) {
                 return false;
@@ -8104,7 +8104,7 @@ class nusoap_client extends nusoap_base
             $evalStr = "echo \"$evalStr\";";
             return $evalStr;
         }
-        if ('wsdl' == $this->endpointType && is_null($this->wsdl)) {
+        if ('wsdl' == $this->endpointType && null === $this->wsdl) {
             $this->loadWSDL();
             if ($this->getError()) {
                 return 'echo "' . $this->getError() . '";';
