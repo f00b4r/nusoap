@@ -991,11 +991,11 @@ function iso8601_to_timestamp($datestr)
             $h = substr($regs[8], 1, 2);
             $m = substr($regs[8], strlen($regs[8]) - 2, 2);
             if ('-' == $op) {
-                $regs[4] = $regs[4] + $h;
-                $regs[5] = $regs[5] + $m;
+                $regs[4] += $h;
+                $regs[5] += $m;
             } elseif ('+' == $op) {
-                $regs[4] = $regs[4] - $h;
-                $regs[5] = $regs[5] - $m;
+                $regs[4] -= $h;
+                $regs[5] -= $m;
             }
         }
         return gmmktime($regs[4], $regs[5], $regs[6], $regs[2], $regs[3], $regs[1]);
