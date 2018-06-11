@@ -91,28 +91,28 @@ class nusoap_base
      * @var string
      * @access private
      */
-    private $title = 'NuSOAP';
+    protected $title = 'NuSOAP';
     /**
      * Version for HTTP headers.
      *
      * @var string
      * @access private
      */
-    private $version = '0.9.6';
+    protected $version = '0.9.6';
     /**
      * CVS revision for HTTP headers.
      *
      * @var string
      * @access private
      */
-    private $revision = '$Revision: 1.123 $';
+    protected $revision = '$Revision: 1.123 $';
     /**
      * Current error string (manipulated by getError/setError)
      *
      * @var string
      * @access private
      */
-    private $error_str = '';
+    protected $error_str = '';
     /**
      * Current debug string (manipulated by debug/appendDebug/clearDebug/getDebug/getDebugAsXMLComment)
      *
@@ -174,7 +174,7 @@ class nusoap_base
      * @var      array
      * @access   private
      */
-    private $usedNamespaces = [];
+    protected $usedNamespaces = [];
 
     /**
      * XML Schema types in an array of uri => (array of xml type => php type)
@@ -285,7 +285,7 @@ class nusoap_base
      * @param    string $string debug data
      * @access   private
      */
-    private function debug($string)
+    protected function debug($string)
     {
         if ($this->debugLevel > 0) {
             $this->appendDebug($this->getmicrotime() . ' ' . get_class($this) . ": $string\n");
@@ -356,7 +356,7 @@ class nusoap_base
      * @param    string $val The string in which to expand entities.
      * @access    private
      */
-    private function expandEntities($val)
+    protected function expandEntities($val)
     {
         if ($this->charencoding) {
             $val = str_replace('&', '&amp;', $val);
@@ -388,7 +388,7 @@ class nusoap_base
      * @return   boolean $string error string
      * @access   private
      */
-    private function setError($str)
+    protected function setError($str)
     {
         $this->error_str = $str;
     }
@@ -400,7 +400,7 @@ class nusoap_base
      * @return    string    (arraySimple|arrayStruct)
      * @access    private
      */
-    private function isArraySimpleOrStruct($val)
+    protected function isArraySimpleOrStruct($val)
     {
         $keyList = array_keys($val);
         foreach ($keyList as $keyListValue) {
@@ -759,7 +759,7 @@ class nusoap_base
      * @return    string contracted qname
      * @access   private
      */
-    private function contractQName($qname)
+    protected function contractQName($qname)
     {
         // get element namespace
         //$this->xdebug("Contract $qname");
@@ -785,7 +785,7 @@ class nusoap_base
      * @return    string expanded qname
      * @access   private
      */
-    private function expandQname($qname)
+    protected function expandQname($qname)
     {
         // get element prefix
         if (strpos($qname, ':') && !preg_match('/^http:\/\//', $qname)) {
@@ -1294,7 +1294,7 @@ class nusoap_xmlschema extends nusoap_base
      * @param    string $attrs associative array of attributes
      * @access   private
      */
-    private function schemaStartElement($parser, $name, $attrs)
+    public function schemaStartElement($parser, $name, $attrs)
     {
 
         // position in the total number of elements, starting from 0
@@ -5481,7 +5481,7 @@ class wsdl extends nusoap_base
      *
      * @access private
      */
-    private function webDescription()
+    public function webDescription()
     {
         global $HTTP_SERVER_VARS;
 
