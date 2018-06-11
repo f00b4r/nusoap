@@ -2811,7 +2811,7 @@ class soap_transport_http extends nusoap_base
         } else {
             $this->debug('remove proxy');
             $proxy = null;
-            unsetHeader('Proxy-Authorization');
+            $this->unsetHeader('Proxy-Authorization');
         }
     }
 
@@ -7388,22 +7388,22 @@ class nusoap_client extends nusoap_base
      * fault related variables
      */
     /**
-     * @var      fault
+     * @var  string    $fault
      * @access   public
      */
     public $fault;
     /**
-     * @var      faultcode
+     * @var  string $faultcode
      * @access   public
      */
     public $faultcode;
     /**
-     * @var      faultstring
+     * @var string $faultstring
      * @access   public
      */
     public $faultstring;
     /**
-     * @var      faultdetail
+     * @var string $faultdetail
      * @access   public
      */
     public $faultdetail;
