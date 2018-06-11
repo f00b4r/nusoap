@@ -4239,7 +4239,7 @@ class nusoap_server extends nusoap_base
                 if (count($this->opData['output']['parts']) > 1) {
                     $this->debug('more than one output part, so use the method return unchanged');
                     $opParams = $this->methodreturn;
-                } elseif (1 == sizeof($this->opData['output']['parts'])) {
+                } elseif (1 == count($this->opData['output']['parts'])) {
                     $this->debug('exactly one output part, so wrap the method return in a simple array');
                     // TODO: verify that it is not already wrapped!
                     //foreach ($this->opData['output']['parts'] as $name => $type) {
@@ -8247,7 +8247,7 @@ class nusoap_client extends nusoap_base
      */
     private function checkCookies()
     {
-        if (0 == sizeof($this->cookies)) {
+        if (0 == count($this->cookies)) {
             return true;
         }
         $this->debug('checkCookie: check ' . count($this->cookies) . ' cookies');
@@ -8281,7 +8281,7 @@ class nusoap_client extends nusoap_base
      */
     private function UpdateCookies($cookies)
     {
-        if (0 == sizeof($this->cookies)) {
+        if (0 == count($this->cookies)) {
             // no existing cookies: take whatever is new
             if (count($cookies) > 0) {
                 $this->debug('Setting new cookie(s)');
@@ -8289,7 +8289,7 @@ class nusoap_client extends nusoap_base
             }
             return true;
         }
-        if (0 == sizeof($cookies)) {
+        if (0 == count($cookies)) {
             // no new cookies: keep what we've got
             return true;
         }
