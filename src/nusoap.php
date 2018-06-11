@@ -1204,7 +1204,7 @@ class nusoap_xmlschema extends nusoap_base
     {
         // parse xml file
         if ('' != $xml) {
-            $xmlStr = @implode('', @file($xml));
+            $xmlStr = @file_get_contents($xml);
             if ('' == $xmlStr) {
                 $msg = 'Error reading XML from ' . $xml;
                 $this->setError($msg);
