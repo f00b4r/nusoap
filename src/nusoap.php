@@ -3426,7 +3426,7 @@ class soap_transport_http extends nusoap_base
      * parse an incoming Cookie into it's parts
      *
      * @param    string $cookie_str content of cookie
-     * @return    array with data of that cookie
+     * @return    bool|array with data of that cookie
      * @access    private
      */
     /*
@@ -7712,7 +7712,7 @@ class nusoap_client extends nusoap_base
      * get available data pertaining to an operation
      *
      * @param    string $operation operation name
-     * @return    array array of data pertaining to the operation
+     * @return   bool|array array of data pertaining to the operation
      * @access   public
      */
     public function getOperationData($operation)
