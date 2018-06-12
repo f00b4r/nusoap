@@ -2443,158 +2443,159 @@ class soap_transport_http extends nusoap_base
 
             $this->debug('socket connected');
             return true;
-        if ('curl' === $this->io_method()) {
-            if (!extension_loaded('curl')) {
-                //			$this->setError('cURL Extension, or OpenSSL extension w/ PHP version >= 4.3 is required for HTTPS');
-                $this->setError('The PHP cURL Extension is required for HTTPS or NLTM.  You will need to re-build or update your PHP to include cURL or change php.ini to load the PHP cURL extension.');
+        }
+            if ('curl' === $this->io_method()) {
+                if (!extension_loaded('curl')) {
+                    //			$this->setError('cURL Extension, or OpenSSL extension w/ PHP version >= 4.3 is required for HTTPS');
+                    $this->setError('The PHP cURL Extension is required for HTTPS or NLTM.  You will need to re-build or update your PHP to include cURL or change php.ini to load the PHP cURL extension.');
+                    return false;
+                }
+                // Avoid warnings when PHP does not have these options
+                $CURLOPT_CONNECTIONTIMEOUT = 78;
+                if (defined('CURLOPT_CONNECTIONTIMEOUT')) {
+                    $CURLOPT_CONNECTIONTIMEOUT = CURLOPT_CONNECTIONTIMEOUT;
+                }
+                $CURLOPT_HTTPAUTH = 107;
+                if (defined('CURLOPT_HTTPAUTH')) {
+                    $CURLOPT_HTTPAUTH = CURLOPT_HTTPAUTH;
+                }
+                $CURLOPT_PROXYAUTH = 111;
+                if (defined('CURLOPT_PROXYAUTH')) {
+                    $CURLOPT_PROXYAUTH = CURLOPT_PROXYAUTH;
+                }
+                $CURLAUTH_BASIC = 1;
+                if (defined('CURLAUTH_BASIC')) {
+                    $CURLAUTH_BASIC = CURLAUTH_BASIC;
+                }
+                $CURLAUTH_DIGEST = 2;
+                if (defined('CURLAUTH_DIGEST')) {
+                    $CURLAUTH_DIGEST = CURLAUTH_DIGEST;
+                }
+                $CURLAUTH_NTLM = 8;
+                if (defined('CURLAUTH_NTLM')) {
+                    $CURLAUTH_NTLM = CURLAUTH_NTLM;
+                }
+
+                $this->debug('connect using cURL');
+                // init CURL
+                $this->ch = curl_init();
+                // set url
+                $hostURL = ('' !== $this->port) ? "$this->scheme://$this->host:$this->port" : "$this->scheme://$this->host";
+                // add path
+                $hostURL .= $this->path;
+                $this->setCurlOption(CURLOPT_URL, $hostURL);
+                // follow location headers (re-directs)
+                $this->setCurlOption(CURLOPT_FOLLOWLOCATION, 1);
+                // ask for headers in the response output
+                $this->setCurlOption(CURLOPT_HEADER, 1);
+                // ask for the response output as the return value
+                $this->setCurlOption(CURLOPT_RETURNTRANSFER, 1);
+                // encode
+                // We manage this ourselves through headers and encoding
+                //		if(function_exists('gzuncompress')){
+                //			$this->setCurlOption(CURLOPT_ENCODING, 'deflate');
+                //		}
+                // persistent connection
+                if ($this->persistentConnection) {
+                    // I believe the following comment is now bogus, having applied to
+                    // the code when it used CURLOPT_CUSTOMREQUEST to send the request.
+                    // The way we send data, we cannot use persistent connections, since
+                    // there will be some "junk" at the end of our request.
+                    //$this->setCurlOption(CURL_HTTP_VERSION_1_1, true);
+                    $this->persistentConnection = false;
+                    $this->setHeader('Connection', 'close');
+                }
+                // set timeouts
+                if (0 != $connection_timeout) {
+                    $this->setCurlOption($CURLOPT_CONNECTIONTIMEOUT, $connection_timeout);
+                }
+                if (0 != $response_timeout) {
+                    $this->setCurlOption(CURLOPT_TIMEOUT, $response_timeout);
+                }
+
+                if ('https' === $this->scheme) {
+                    $this->debug('set cURL SSL verify options');
+                    // recent versions of cURL turn on peer/host checking by default,
+                    // while PHP binaries are not compiled with a default location for the
+                    // CA cert bundle, so disable peer/host checking.
+                    //$this->setCurlOption(CURLOPT_CAINFO, 'f:\php-4.3.2-win32\extensions\curl-ca-bundle.crt');
+                    $this->setCurlOption(CURLOPT_SSL_VERIFYPEER, 0);
+                    $this->setCurlOption(CURLOPT_SSL_VERIFYHOST, 0);
+
+                    // support client certificates (thanks Tobias Boes, Doug Anarino, Eryan Ariobowo)
+                    if ('certificate' === $this->authtype) {
+                        $this->debug('set cURL certificate options');
+                        if (isset($this->certRequest['cainfofile'])) {
+                            $this->setCurlOption(CURLOPT_CAINFO, $this->certRequest['cainfofile']);
+                        }
+                        if (isset($this->certRequest['verifypeer'])) {
+                            $this->setCurlOption(CURLOPT_SSL_VERIFYPEER, $this->certRequest['verifypeer']);
+                        } else {
+                            $this->setCurlOption(CURLOPT_SSL_VERIFYPEER, 1);
+                        }
+                        if (isset($this->certRequest['verifyhost'])) {
+                            $this->setCurlOption(CURLOPT_SSL_VERIFYHOST, $this->certRequest['verifyhost']);
+                        } else {
+                            $this->setCurlOption(CURLOPT_SSL_VERIFYHOST, 1);
+                        }
+                        if (isset($this->certRequest['sslcertfile'])) {
+                            $this->setCurlOption(CURLOPT_SSLCERT, $this->certRequest['sslcertfile']);
+                        }
+                        if (isset($this->certRequest['sslkeyfile'])) {
+                            $this->setCurlOption(CURLOPT_SSLKEY, $this->certRequest['sslkeyfile']);
+                        }
+                        if (isset($this->certRequest['passphrase'])) {
+                            $this->setCurlOption(CURLOPT_SSLKEYPASSWD, $this->certRequest['passphrase']);
+                        }
+                        if (isset($this->certRequest['certpassword'])) {
+                            $this->setCurlOption(CURLOPT_SSLCERTPASSWD, $this->certRequest['certpassword']);
+                        }
+                    }
+                }
+                if ($this->authtype && ('certificate' !== $this->authtype)) {
+                    if ($this->username) {
+                        $this->debug('set cURL username/password');
+                        $this->setCurlOption(CURLOPT_USERPWD, "$this->username:$this->password");
+                    }
+                    if ('basic' === $this->authtype) {
+                        $this->debug('set cURL for Basic authentication');
+                        $this->setCurlOption($CURLOPT_HTTPAUTH, $CURLAUTH_BASIC);
+                    }
+                    if ('digest' === $this->authtype) {
+                        $this->debug('set cURL for digest authentication');
+                        $this->setCurlOption($CURLOPT_HTTPAUTH, $CURLAUTH_DIGEST);
+                    }
+                    if ('ntlm' === $this->authtype) {
+                        $this->debug('set cURL for NTLM authentication');
+                        $this->setCurlOption($CURLOPT_HTTPAUTH, $CURLAUTH_NTLM);
+                    }
+                }
+                if (is_array($this->proxy)) {
+                    $this->debug('set cURL proxy options');
+                    if ('' !== $this->proxy['port']) {
+                        $this->setCurlOption(CURLOPT_PROXY, $this->proxy['host'] . ':' . $this->proxy['port']);
+                    } else {
+                        $this->setCurlOption(CURLOPT_PROXY, $this->proxy['host']);
+                    }
+                    if ($this->proxy['username'] || $this->proxy['password']) {
+                        $this->debug('set cURL proxy authentication options');
+                        $this->setCurlOption(CURLOPT_PROXYUSERPWD, $this->proxy['username'] . ':' . $this->proxy['password']);
+                        if ('basic' === $this->proxy['authtype']) {
+                            $this->setCurlOption($CURLOPT_PROXYAUTH, $CURLAUTH_BASIC);
+                        }
+                        if ('ntlm' === $this->proxy['authtype']) {
+                            $this->setCurlOption($CURLOPT_PROXYAUTH, $CURLAUTH_NTLM);
+                        }
+                    }
+                }
+                $this->debug('cURL connection set up');
+                return true;
+            } else {
+                $this->setError('Unknown scheme ' . $this->scheme);
+                $this->debug('Unknown scheme ' . $this->scheme);
                 return false;
             }
-            // Avoid warnings when PHP does not have these options
-            $CURLOPT_CONNECTIONTIMEOUT = 78;
-            if (defined('CURLOPT_CONNECTIONTIMEOUT')) {
-                $CURLOPT_CONNECTIONTIMEOUT = CURLOPT_CONNECTIONTIMEOUT;
-            }
-            $CURLOPT_HTTPAUTH = 107;
-            if (defined('CURLOPT_HTTPAUTH')) {
-                $CURLOPT_HTTPAUTH = CURLOPT_HTTPAUTH;
-            }
-            $CURLOPT_PROXYAUTH = 111;
-            if (defined('CURLOPT_PROXYAUTH')) {
-                $CURLOPT_PROXYAUTH = CURLOPT_PROXYAUTH;
-            }
-            $CURLAUTH_BASIC = 1;
-            if (defined('CURLAUTH_BASIC')) {
-                $CURLAUTH_BASIC = CURLAUTH_BASIC;
-            }
-            $CURLAUTH_DIGEST = 2;
-            if (defined('CURLAUTH_DIGEST')) {
-                $CURLAUTH_DIGEST = CURLAUTH_DIGEST;
-            }
-            $CURLAUTH_NTLM = 8;
-            if (defined('CURLAUTH_NTLM')) {
-                $CURLAUTH_NTLM = CURLAUTH_NTLM;
-            }
-
-            $this->debug('connect using cURL');
-            // init CURL
-            $this->ch = curl_init();
-            // set url
-            $hostURL = ('' !== $this->port) ? "$this->scheme://$this->host:$this->port" : "$this->scheme://$this->host";
-            // add path
-            $hostURL .= $this->path;
-            $this->setCurlOption(CURLOPT_URL, $hostURL);
-            // follow location headers (re-directs)
-            $this->setCurlOption(CURLOPT_FOLLOWLOCATION, 1);
-            // ask for headers in the response output
-            $this->setCurlOption(CURLOPT_HEADER, 1);
-            // ask for the response output as the return value
-            $this->setCurlOption(CURLOPT_RETURNTRANSFER, 1);
-            // encode
-            // We manage this ourselves through headers and encoding
-            //		if(function_exists('gzuncompress')){
-            //			$this->setCurlOption(CURLOPT_ENCODING, 'deflate');
-            //		}
-            // persistent connection
-            if ($this->persistentConnection) {
-                // I believe the following comment is now bogus, having applied to
-                // the code when it used CURLOPT_CUSTOMREQUEST to send the request.
-                // The way we send data, we cannot use persistent connections, since
-                // there will be some "junk" at the end of our request.
-                //$this->setCurlOption(CURL_HTTP_VERSION_1_1, true);
-                $this->persistentConnection = false;
-                $this->setHeader('Connection', 'close');
-            }
-            // set timeouts
-            if (0 != $connection_timeout) {
-                $this->setCurlOption($CURLOPT_CONNECTIONTIMEOUT, $connection_timeout);
-            }
-            if (0 != $response_timeout) {
-                $this->setCurlOption(CURLOPT_TIMEOUT, $response_timeout);
-            }
-
-            if ('https' === $this->scheme) {
-                $this->debug('set cURL SSL verify options');
-                // recent versions of cURL turn on peer/host checking by default,
-                // while PHP binaries are not compiled with a default location for the
-                // CA cert bundle, so disable peer/host checking.
-                //$this->setCurlOption(CURLOPT_CAINFO, 'f:\php-4.3.2-win32\extensions\curl-ca-bundle.crt');
-                $this->setCurlOption(CURLOPT_SSL_VERIFYPEER, 0);
-                $this->setCurlOption(CURLOPT_SSL_VERIFYHOST, 0);
-
-                // support client certificates (thanks Tobias Boes, Doug Anarino, Eryan Ariobowo)
-                if ('certificate' === $this->authtype) {
-                    $this->debug('set cURL certificate options');
-                    if (isset($this->certRequest['cainfofile'])) {
-                        $this->setCurlOption(CURLOPT_CAINFO, $this->certRequest['cainfofile']);
-                    }
-                    if (isset($this->certRequest['verifypeer'])) {
-                        $this->setCurlOption(CURLOPT_SSL_VERIFYPEER, $this->certRequest['verifypeer']);
-                    } else {
-                        $this->setCurlOption(CURLOPT_SSL_VERIFYPEER, 1);
-                    }
-                    if (isset($this->certRequest['verifyhost'])) {
-                        $this->setCurlOption(CURLOPT_SSL_VERIFYHOST, $this->certRequest['verifyhost']);
-                    } else {
-                        $this->setCurlOption(CURLOPT_SSL_VERIFYHOST, 1);
-                    }
-                    if (isset($this->certRequest['sslcertfile'])) {
-                        $this->setCurlOption(CURLOPT_SSLCERT, $this->certRequest['sslcertfile']);
-                    }
-                    if (isset($this->certRequest['sslkeyfile'])) {
-                        $this->setCurlOption(CURLOPT_SSLKEY, $this->certRequest['sslkeyfile']);
-                    }
-                    if (isset($this->certRequest['passphrase'])) {
-                        $this->setCurlOption(CURLOPT_SSLKEYPASSWD, $this->certRequest['passphrase']);
-                    }
-                    if (isset($this->certRequest['certpassword'])) {
-                        $this->setCurlOption(CURLOPT_SSLCERTPASSWD, $this->certRequest['certpassword']);
-                    }
-                }
-            }
-            if ($this->authtype && ('certificate' !== $this->authtype)) {
-                if ($this->username) {
-                    $this->debug('set cURL username/password');
-                    $this->setCurlOption(CURLOPT_USERPWD, "$this->username:$this->password");
-                }
-                if ('basic' === $this->authtype) {
-                    $this->debug('set cURL for Basic authentication');
-                    $this->setCurlOption($CURLOPT_HTTPAUTH, $CURLAUTH_BASIC);
-                }
-                if ('digest' === $this->authtype) {
-                    $this->debug('set cURL for digest authentication');
-                    $this->setCurlOption($CURLOPT_HTTPAUTH, $CURLAUTH_DIGEST);
-                }
-                if ('ntlm' === $this->authtype) {
-                    $this->debug('set cURL for NTLM authentication');
-                    $this->setCurlOption($CURLOPT_HTTPAUTH, $CURLAUTH_NTLM);
-                }
-            }
-            if (is_array($this->proxy)) {
-                $this->debug('set cURL proxy options');
-                if ('' !== $this->proxy['port']) {
-                    $this->setCurlOption(CURLOPT_PROXY, $this->proxy['host'] . ':' . $this->proxy['port']);
-                } else {
-                    $this->setCurlOption(CURLOPT_PROXY, $this->proxy['host']);
-                }
-                if ($this->proxy['username'] || $this->proxy['password']) {
-                    $this->debug('set cURL proxy authentication options');
-                    $this->setCurlOption(CURLOPT_PROXYUSERPWD, $this->proxy['username'] . ':' . $this->proxy['password']);
-                    if ('basic' === $this->proxy['authtype']) {
-                        $this->setCurlOption($CURLOPT_PROXYAUTH, $CURLAUTH_BASIC);
-                    }
-                    if ('ntlm' === $this->proxy['authtype']) {
-                        $this->setCurlOption($CURLOPT_PROXYAUTH, $CURLAUTH_NTLM);
-                    }
-                }
-            }
-            $this->debug('cURL connection set up');
-            return true;
-        } else {
-            $this->setError('Unknown scheme ' . $this->scheme);
-            $this->debug('Unknown scheme ' . $this->scheme);
-            return false;
         }
-    }
 
     /**
      * sends the SOAP request and gets the SOAP response via HTTP[S]
@@ -4199,9 +4200,7 @@ class nusoap_server extends nusoap_base
     {
         $this->debug('Entering serialize_return methodname: ' . $this->methodname . ' methodURI: ' . $this->methodURI);
         // if fault
-        if (isset($this->methodreturn) && is_object($this->methodreturn)
-            && (($this->methodreturn instanceof \Soap_fault)
-                || ('nusoap_fault' === get_class($this->methodreturn)))) {
+        if (isset($this->methodreturn) && is_object($this->methodreturn) && (('soap_fault' === get_class($this->methodreturn)) || ('nusoap_fault' === get_class($this->methodreturn)))) {
             $this->debug('got a fault object from method');
             $this->fault = $this->methodreturn;
             return;
