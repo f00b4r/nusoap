@@ -609,7 +609,8 @@ class Nusoap_base
                 break;
             case (is_array($val) || $type):
                 // detect if struct or array
-
+                $array_types = [];
+                $tt_ns = $tt = '';
                 $valueType = $this->isArraySimpleOrStruct($val);
                 if ('arraySimple' === $valueType || preg_match('/^ArrayOf/', $type)) {
                     $this->debug('serialize_val: serialize array');
@@ -1161,9 +1162,9 @@ class Nusoap_xmlschema extends Nusoap_base
     /**
      * Constructor
      *
-     * @param string       $schema     schema document URI
-     * @param string       $xml        xml document URI
-     * @param array|string $namespaces namespaces defined in enclosing XML
+     * @param string $schema     schema document URI
+     * @param string $xml        xml document URI
+     * @param array  $namespaces namespaces defined in enclosing XML
      */
     public function __construct($schema = '', $xml = '', $namespaces = [])
     {
@@ -1285,6 +1286,8 @@ class Nusoap_xmlschema extends Nusoap_base
     public function schemaStartElement($parser, $name, $attrs)
     {
         // position in the total number of elements, starting from 0
+        $eAttrs = [];
+        $aname = '';
         $pos   = $this->position++;
         $depth = $this->depth++;
         // set self as current value for this depth
@@ -1853,6 +1856,7 @@ class Nusoap_xmlschema extends Nusoap_base
      */
     public function getTypeDef($type)
     {
+        $typeDef = [];
         //$this->debug("in getTypeDef for type $type");
         if ('^' === mb_substr($type, -1)) {
             $is_element = 1;
@@ -1940,6 +1944,7 @@ class Nusoap_xmlschema extends Nusoap_base
      */
     public function serializeTypeDef($type)
     {
+        $str = '';
         //print "in sTD() for type $type<br>";
         if (false !== ($typeDef = $this->getTypeDef($type))) {
             $str .= '<' . $type;
@@ -1978,6 +1983,7 @@ class Nusoap_xmlschema extends Nusoap_base
      */
     public function typeToForm($name, $type)
     {
+        $buffer .= '';
         // get typedef
         if (false !== ($typeDef = $this->getTypeDef($type))) {
             // if struct
@@ -2219,7 +2225,7 @@ class Soap_transport_http extends Nusoap_base
     public $digest_uri           = '';
     public $scheme               = '';
     public $host                 = '';
-    public $port                 = '';
+    public $port                 = 0;
     public $path                 = '';
     public $request_method       = 'POST';
     public $protocol_version     = '1.0';
@@ -2240,7 +2246,9 @@ class Soap_transport_http extends Nusoap_base
     public $password             = '';
     public $authtype             = '';
     public $digestRequest        = [];
-    public $certRequest          = [];    // keys must be cainfofile (optional), sslcertfile, sslkeyfile, passphrase, certpassword (optional), verifypeer (optional), verifyhost (optional)
+    public $certRequest          = [];
+    public $tryagain;
+    // keys must be cainfofile (optional), sslcertfile, sslkeyfile, passphrase, certpassword (optional), verifypeer (optional), verifyhost (optional)
     // cainfofile: certificate authority file, e.g. '$pathToPemFiles/rootca.pem'
     // sslcertfile: SSL certificate file, e.g. '$pathToPemFiles/mycert.pem'
     // sslkeyfile: SSL key file, e.g. '$pathToPemFiles/mykey.pem'
@@ -2602,13 +2610,14 @@ class Soap_transport_http extends Nusoap_base
      * @param int       $timeout          set connection timeout in seconds
      * @param int       $response_timeout set response timeout in seconds
      * @param    array  $cookies          cookies to send
-     * @return    string data
+     * @return    string|bool data
      */
     public function send($data, $timeout = 0, $response_timeout = 30, $cookies = null)
     {
         $this->debug('entered send() with data of length: ' . mb_strlen($data));
         $this->tryagain = true;
         $tries          = 0;
+        $respdata = '';
         while ($this->tryagain) {
             $this->tryagain = false;
             if (++$tries < 2) {
@@ -2997,10 +3006,11 @@ class Soap_transport_http extends Nusoap_base
     /**
      * Gets the SOAP response via HTTP[S]
      *
-     * @return    string the response (also sets member variables like incoming_payload)
+     * @return    string|bool the response (also sets member variables like incoming_payload)
      */
     private function getResponse()
     {
+        $header_array = [];
         $this->incoming_payload = '';
         if ('socket' === $this->io_method()) {
             // loop until headers have been retrieved
@@ -4084,7 +4094,7 @@ class Nusoap_server extends Nusoap_base
                 $instance = new $class();
                 $call_arg = [&$instance, $method];
             }
-            if (is_array($this->methodparams)) {
+            if (is_array($this->methodparams) && count($this->methodparams) > 0) {
                 $this->methodreturn = call_user_func_array($call_arg, array_values($this->methodparams));
             } else {
                 $this->methodreturn = call_user_func_array($call_arg, []);
