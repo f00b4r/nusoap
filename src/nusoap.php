@@ -1983,7 +1983,7 @@ class Nusoap_xmlschema extends Nusoap_base
      */
     public function typeToForm($name, $type)
     {
-        $buffer .= '';
+        $buffer = '';
         // get typedef
         if (false !== ($typeDef = $this->getTypeDef($type))) {
             // if struct
@@ -2486,7 +2486,7 @@ class Soap_transport_http extends Nusoap_base
             // init CURL
             $this->ch = curl_init();
             // set url
-            $hostURL = ('' !== $this->port) ? "$this->scheme://$this->host:$this->port" : "$this->scheme://$this->host";
+            $hostURL = (0 !== $this->port) ? "$this->scheme://$this->host:$this->port" : "$this->scheme://$this->host";
             // add path
             $hostURL .= $this->path;
             $this->setCurlOption(CURLOPT_URL, $hostURL);
@@ -2649,7 +2649,7 @@ class Soap_transport_http extends Nusoap_base
      * @param int       $timeout          set connection timeout in seconds
      * @param int       $response_timeout set response timeout in seconds
      * @param    array  $cookies          cookies to send
-     * @return    string data
+     * @return    string|bool data
      * @deprecated
      */
     public function sendHTTPS($data, $timeout = 0, $response_timeout = 30, $cookies = [])
