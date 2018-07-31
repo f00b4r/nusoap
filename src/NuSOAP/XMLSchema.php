@@ -104,7 +104,7 @@ class XMLSchema extends Base {
     public function parseFile($xml, $type) {
         // parse xml file
         if ($xml != '') {
-            $xmlStr = @join('', @file($xml));
+            $xmlStr = @implode('', @file($xml));
             if ($xmlStr == '') {
                 $msg = 'Error reading XML from '.$xml;
                 $this->setError($msg);
@@ -583,7 +583,7 @@ class XMLSchema extends Base {
         $schemaPrefix = $this->getPrefixFromNamespace($this->XMLSchemaVersion);
         $xml          = '';
         // imports
-        if (sizeof($this->imports) > 0) {
+        if (count($this->imports) > 0) {
             foreach ($this->imports as $ns => $list) {
                 foreach ($list as $ii) {
                     if ($ii['location'] != '') {
@@ -615,7 +615,7 @@ class XMLSchema extends Base {
                 }
                 // compositor wraps elements
                 if (isset($attrs['compositor']) && ($attrs['compositor'] != '')) {
-                    $contentStr = "  <${schemaPrefix}:{$attrs[compositor]}>\n".$contentStr."  </${schemaPrefix}:{$attrs[compositor]}>\n";
+                    $contentStr = '  <'.$schemaPrefix.':'.$attrs['compositor'].">\n".$contentStr."  </${schemaPrefix}:{$attrs[compositor]}>\n";
                 }
             }
             // attributes
@@ -624,12 +624,12 @@ class XMLSchema extends Base {
                     $contentStr .= "    <${schemaPrefix}:attribute";
                     foreach ($aParts as $a => $v) {
                         if ($a == 'ref' || $a == 'type') {
-                            $contentStr .= " ${a}=\"".$this->contractQName($v).'"';
+                            $contentStr .= ' '.$a.'="'.$this->contractQName($v).'"';
                         } elseif ($a == 'http://schemas.xmlsoap.org/wsdl/:arrayType') {
                             $this->usedNamespaces['wsdl'] = $this->namespaces['wsdl'];
                             $contentStr .= ' wsdl:arrayType="'.$this->contractQName($v).'"';
                         } else {
-                            $contentStr .= " ${a}=\"${v}\"";
+                            $contentStr .= ' '.$a.'="'.$v.'"';
                         }
                     }
                     $contentStr .= "/>\n";

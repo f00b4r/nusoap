@@ -388,7 +388,7 @@ class Client extends Base {
         if (is_array($return)) {
             // multiple 'out' parameters, which we return wrapped up
             // in the array
-            if (sizeof($return) > 1) {
+            if (count($return) > 1) {
                 return $return;
             }
             // single 'out' parameter (normally the return value)
@@ -832,7 +832,7 @@ class Client extends Base {
         foreach ($this->operations as $operation => $opData) {
             if ($operation != '') {
                 // create param string and param comment string
-                if (sizeof($opData['input']['parts']) > 0) {
+                if (count($opData['input']['parts']) > 0) {
                     $paramStr        = '';
                     $paramArrayStr   = '';
                     $paramCommentStr = '';
@@ -956,10 +956,10 @@ class Client extends Base {
      * @return bool always return true
      */
     public function checkCookies() {
-        if (sizeof($this->cookies) == 0) {
+        if (count($this->cookies) == 0) {
             return true;
         }
-        $this->debug('checkCookie: check '.sizeof($this->cookies).' cookies');
+        $this->debug('checkCookie: check '.count($this->cookies).' cookies');
         $curr_cookies  = $this->cookies;
         $this->cookies = [];
         foreach ($curr_cookies as $cookie) {
@@ -978,7 +978,7 @@ class Client extends Base {
                 $this->cookies[] = $cookie;
             }
         }
-        $this->debug('checkCookie: '.sizeof($this->cookies).' cookies left in array');
+        $this->debug('checkCookie: '.count($this->cookies).' cookies left in array');
 
         return true;
     }
@@ -991,16 +991,16 @@ class Client extends Base {
      * @return bool always return true
      */
     public function UpdateCookies($cookies) {
-        if (sizeof($this->cookies) == 0) {
+        if (count($this->cookies) == 0) {
             // no existing cookies: take whatever is new
-            if (sizeof($cookies) > 0) {
+            if (count($cookies) > 0) {
                 $this->debug('Setting new cookie(s)');
                 $this->cookies = $cookies;
             }
 
             return true;
         }
-        if (sizeof($cookies) == 0) {
+        if (count($cookies) == 0) {
             // no new cookies: keep what we've got
             return true;
         }

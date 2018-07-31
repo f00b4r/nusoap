@@ -970,7 +970,7 @@ class Wsdl extends Base {
         }
         $xml .= '>';
         // imports
-        if (sizeof($this->import) > 0) {
+        if (count($this->import) > 0) {
             foreach ($this->import as $ns => $list) {
                 foreach ($list as $ii) {
                     if ($ii['location'] != '') {
@@ -1209,9 +1209,9 @@ class Wsdl extends Base {
 
         // set input params
         $xml = '';
-        if (isset($opData[$direction]['parts']) && sizeof($opData[$direction]['parts']) > 0) {
+        if (isset($opData[$direction]['parts']) && count($opData[$direction]['parts']) > 0) {
             $parts      = &$opData[$direction]['parts'];
-            $part_count = sizeof($parts);
+            $part_count = count($parts);
             $style      = $opData['style'];
             $use        = $opData[$direction]['use'];
             $this->debug("have '.${part_count}.' part(s) to serialize using ".$style.'/'.$use);
@@ -1314,7 +1314,7 @@ class Wsdl extends Base {
 
         // set input params
         $xml = '';
-        if (isset($opData[$direction]['parts']) && sizeof($opData[$direction]['parts']) > 0) {
+        if (isset($opData[$direction]['parts']) && count($opData[$direction]['parts']) > 0) {
             $use = $opData[$direction]['use'];
             $this->debug('use='.$use);
             $this->debug('got '.count($opData[$direction]['parts']).' part(s)');
@@ -1619,15 +1619,15 @@ class Wsdl extends Base {
             if (isset($typeDef['multidimensional'])) {
                 $nv = [];
                 foreach ($value as $v) {
-                    $cols = ','.sizeof($v);
+                    $cols = ','.count($v);
                     $nv   = array_merge($nv, $v);
                 }
                 $value = $nv;
             } else {
                 $cols = '';
             }
-            if (is_array($value) && sizeof($value) >= 1) {
-                $rows     = sizeof($value);
+            if (is_array($value) && count($value) >= 1) {
+                $rows     = count($value);
                 $contents = '';
                 foreach ($value as $k => $v) {
                     $this->debug('serializing array element: '.$k.', '.(is_array($v) ? 'array' : $v).' of type: '.$typeDef['arrayType']);

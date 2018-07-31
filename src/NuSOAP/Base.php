@@ -489,7 +489,7 @@ class Base {
                 }
 
                 break;
-            case is_int($val) || is_long($val) || $type == 'int':
+            case is_int($val) || is_int($val) || $type == 'int':
                 $this->debug('serialize_val: serialize int');
                 if ($use == 'literal') {
                     $xml .= '<'.$name.$xmlns.$atts.'>'.$val.'</'.$name.'>';
@@ -498,7 +498,7 @@ class Base {
                 }
 
                 break;
-            case is_float($val) || is_double($val) || $type == 'float':
+            case is_float($val) || is_float($val) || $type == 'float':
                 $this->debug('serialize_val: serialize float');
                 if ($use == 'literal') {
                     $xml .= '<'.$name.$xmlns.$atts.'>'.$val.'</'.$name.'>';

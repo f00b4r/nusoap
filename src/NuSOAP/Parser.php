@@ -150,7 +150,7 @@ class Parser extends Base {
                     $this->soapheader = $this->message[$this->root_header]['result'];
                 }
                 // resolve hrefs/ids
-                if (sizeof($this->multirefs) > 0) {
+                if (count($this->multirefs) > 0) {
                     foreach ($this->multirefs as $id => $hrefs) {
                         $this->debug('resolving multirefs for id: '.$id);
                         $idVal = $this->buildVal($this->ids[$id]);
