@@ -1,7 +1,7 @@
 {
   "name": "econea/nusoap",
   "type": "library",
-  "description": "NuSOAP fixed for PHP 5.4 - 7.1",
+  "description": "NuSOAP fixed for PHP 5.4 - 7.2",
   "keywords": ["soap","nusoap"],
   "license": "LGPL-2.0-only",
   "homepage": "https://github.com/econea/nusoap",
@@ -18,7 +18,7 @@
     "jakub-onderka/php-parallel-lint": "~1.0.0"
   },
   "autoload": {
-    "classmap": ["src/"]
+    "psr-4": { "NuSOAP\\": "" },
   },
   "scripts": {
     "linter": [
