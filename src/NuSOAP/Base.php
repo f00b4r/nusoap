@@ -39,26 +39,12 @@ class Base {
     public $error_str = '';
 
     /**
-     * Current debug string (manipulated by debug/appendDebug/clearDebug/getDebug/getDebugAsXMLComment).
-     *
-     * @var string
-     */
-    public $debug_str = '';
-
-    /**
      * toggles automatic encoding of special characters as entities
      * (should always be true, I think).
      *
      * @var bool
      */
     public $charencoding = true;
-
-    /**
-     * the debug level for this instance.
-     *
-     * @var int
-     */
-    private $debugLevel;
 
     /**
      * set schema version.
@@ -73,8 +59,6 @@ class Base {
      * @var string
      */
     public $soap_defencoding = 'UTF-8';
-
-    //var $soap_defencoding = 'UTF-8';
 
     /**
      * namespaces in an array of prefix => uri.

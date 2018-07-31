@@ -4,6 +4,20 @@ namespace NuSOAP;
 
 trait LoggerTrait {
     /**
+     * the debug level for this instance.
+     *
+     * @var int
+     */
+    private $debugLevel;
+
+    /**
+     * Current debug string (manipulated by debug/appendDebug/clearDebug/getDebug/getDebugAsXMLComment).
+     *
+     * @var string
+     */
+    public $debug_str = '';
+
+    /**
      * gets the debug level for this instance.
      *
      * @return int Debug level 0-9, where 0 turns off
@@ -18,18 +32,22 @@ trait LoggerTrait {
      * @param int $level Debug level 0-9, where 0 turns off
      */
     public function setDebugLevel($level) {
-        $this->debugLevel = $level;
+        return $this->debugLevel = $level;
     }
 
     /**
      * adds debug data to the instance debug string with formatting.
      *
      * @param string $string debug data
+     * @param mixed  $time
+     * @param mixed  $class
      */
-    public function debug($string) {
+    public function debug($string, $time = true, $class = true) {
         if ($this->getDebugLevel() > 0) {
-            $this->appendDebug($this->getmicrotime().' '.get_class($this).': '.$string."\n");
+            $this->debug_str .= ($time ? $this->getmicrotime() : '').($class ? get_class($this) : '').$string."\n";
         }
+
+        return true;
     }
 
     /**
@@ -38,11 +56,7 @@ trait LoggerTrait {
      * @param string $string debug data
      */
     public function appendDebug($string) {
-        if ($this->getDebugLevel() > 0) {
-            // it would be nice to use a memory stream here to use
-            // memory more efficiently
-            $this->debug_str .= $string;
-        }
+        return $this->debug($string, false, false);
     }
 
     /**
