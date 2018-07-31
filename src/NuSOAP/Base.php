@@ -10,7 +10,7 @@ class Base {
      *
      * @var string
      */
-    public $title = 'NuSOAP';
+    private $title = '';
 
     /**
      * Version for HTTP headers.
@@ -53,7 +53,7 @@ class Base {
      *
      * @var int
      */
-    public $debugLevel;
+    private $debugLevel;
 
     /**
      * set schema version.
@@ -101,27 +101,91 @@ class Base {
      */
     public $typemap = [
         'http://www.w3.org/2001/XMLSchema' => [
-            'string'   => 'string', 'boolean' => 'boolean', 'float' => 'double', 'double' => 'double', 'decimal' => 'double',
-            'duration' => '', 'dateTime' => 'string', 'time' => 'string', 'date' => 'string', 'gYearMonth' => '',
-            'gYear'    => '', 'gMonthDay' => '', 'gDay' => '', 'gMonth' => '', 'hexBinary' => 'string', 'base64Binary' => 'string',
+            'string'  => 'string',
+            'boolean' => 'boolean',
+            'float'   => 'double',
+            'double'  => 'double',
+            'decimal' => 'double',
+
+            'duration'   => '',
+            'dateTime'   => 'string',
+            'time'       => 'string',
+            'date'       => 'string',
+            'gYearMonth' => '',
+            'gYear'      => '',
+            'gMonthDay'  => '',
+            'gDay'       => '',
+            'gMonth'     => '',
+
+            'hexBinary'    => 'string',
+            'base64Binary' => 'string',
             // abstract "any" types
-            'anyType' => 'string', 'anySimpleType' => 'string',
+            'anyType'       => 'string',
+            'anySimpleType' => 'string',
             // derived datatypes
-            'normalizedString' => 'string', 'token' => 'string', 'language' => '', 'NMTOKEN' => '', 'NMTOKENS' => '', 'Name' => '', 'NCName' => '', 'ID' => '',
-            'IDREF'            => '', 'IDREFS' => '', 'ENTITY' => '', 'ENTITIES' => '', 'integer' => 'integer', 'nonPositiveInteger' => 'integer',
-            'negativeInteger'  => 'integer', 'long' => 'integer', 'int' => 'integer', 'short' => 'integer', 'byte' => 'integer', 'nonNegativeInteger' => 'integer',
-            'unsignedLong'     => '', 'unsignedInt' => '', 'unsignedShort' => '', 'unsignedByte' => '', 'positiveInteger' => '', ],
+            'normalizedString'   => 'string',
+            'token'              => 'string',
+            'language'           => '',
+            'NMTOKEN'            => '',
+            'NMTOKENS'           => '',
+            'Name'               => '',
+            'NCName'             => '',
+            'ID'                 => '',
+            'IDREF'              => '',
+            'IDREFS'             => '',
+            'ENTITY'             => '',
+            'ENTITIES'           => '',
+            'integer'            => 'integer',
+            'nonPositiveInteger' => 'integer',
+            'negativeInteger'    => 'integer',
+            'long'               => 'integer',
+            'int'                => 'integer',
+            'short'              => 'integer',
+            'byte'               => 'integer',
+            'nonNegativeInteger' => 'integer',
+            'unsignedLong'       => '',
+            'unsignedInt'        => '',
+            'unsignedShort'      => '',
+            'unsignedByte'       => '',
+            'positiveInteger'    => '',
+        ],
         'http://www.w3.org/2000/10/XMLSchema' => [
-            'i4'          => '', 'int' => 'integer', 'boolean' => 'boolean', 'string' => 'string', 'double' => 'double',
-            'float'       => 'double', 'dateTime' => 'string',
-            'timeInstant' => 'string', 'base64Binary' => 'string', 'base64' => 'string', 'ur-type' => 'array', ],
+            'i4'           => '',
+            'int'          => 'integer',
+            'boolean'      => 'boolean',
+            'string'       => 'string',
+            'double'       => 'double',
+            'float'        => 'double',
+            'dateTime'     => 'string',
+            'timeInstant'  => 'string',
+            'base64Binary' => 'string',
+            'base64'       => 'string',
+            'ur-type'      => 'array',
+        ],
         'http://www.w3.org/1999/XMLSchema' => [
-            'i4'          => '', 'int' => 'integer', 'boolean' => 'boolean', 'string' => 'string', 'double' => 'double',
-            'float'       => 'double', 'dateTime' => 'string',
-            'timeInstant' => 'string', 'base64Binary' => 'string', 'base64' => 'string', 'ur-type' => 'array', ],
-        'http://soapinterop.org/xsd'                => ['SOAPStruct' => 'struct'],
-        'http://schemas.xmlsoap.org/soap/encoding/' => ['base64' => 'string', 'array' => 'array', 'Array' => 'array'],
-        'http://xml.apache.org/xml-soap'            => ['Map'],
+            'i4'           => '',
+            'int'          => 'integer',
+            'boolean'      => 'boolean',
+            'string'       => 'string',
+            'double'       => 'double',
+            'float'        => 'double',
+            'dateTime'     => 'string',
+            'timeInstant'  => 'string',
+            'base64Binary' => 'string',
+            'base64'       => 'string',
+            'ur-type'      => 'array',
+        ],
+        'http://soapinterop.org/xsd'                => [
+            'SOAPStruct' => 'struct',
+        ],
+        'http://schemas.xmlsoap.org/soap/encoding/' => [
+            'base64' => 'string',
+            'array'  => 'array',
+            'Array'  => 'array',
+        ],
+        'http://xml.apache.org/xml-soap'            => [
+            'Map',
+        ],
     ];
 
     /**
@@ -144,9 +208,11 @@ class Base {
      * constructor.
      *
      * @param mixed $debugLevel
+     * @param mixed $title
      */
-    public function __construct($debugLevel = 0) {
+    public function __construct($debugLevel = 0, $title = 'NuSOAP') {
         $this->setDebugLevel($debugLevel);
+        $this->setTitle($title);
     }
 
     /**
@@ -168,12 +234,30 @@ class Base {
     }
 
     /**
+     * sets the title name of this instance.
+     *
+     * @param string $title
+     */
+    public function setTitle($title = 'NuSOAP') {
+        $this->title = $title;
+    }
+
+    /**
+     * gets the title name of this instance.
+     *
+     * @return string $title
+     */
+    public function getTitle() {
+        return $this->title;
+    }
+
+    /**
      * adds debug data to the instance debug string with formatting.
      *
      * @param string $string debug data
      */
     public function debug($string) {
-        if ($this->debugLevel > 0) {
+        if ($this->getDebugLevel() > 0) {
             $this->appendDebug($this->getmicrotime().' '.get_class($this).': '.$string."\n");
         }
     }
@@ -184,7 +268,7 @@ class Base {
      * @param string $string debug data
      */
     public function appendDebug($string) {
-        if ($this->debugLevel > 0) {
+        if ($this->getDebugLevel() > 0) {
             // it would be nice to use a memory stream here to use
             // memory more efficiently
             $this->debug_str .= $string;
