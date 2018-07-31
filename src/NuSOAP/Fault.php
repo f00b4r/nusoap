@@ -3,6 +3,10 @@
 namespace NuSOAP;
 
 /**
+ * using serialize_val from base.
+ */
+
+/**
  * Contains information for a SOAP fault.
  * Mainly used for returning faults from deployed functions
  * in a server instance.
@@ -64,7 +68,7 @@ class Fault extends Base {
     public function serialize() {
         $ns_string = '';
         foreach ($this->namespaces as $k => $v) {
-            $ns_string .= "\n  xmlns:${k}=\"${v}\"";
+            $ns_string .= "\n".' xmlns:'.$k.'="'.$v.'"';
         }
         $return_msg =
             '<?xml version="1.0" encoding="'.$this->soap_defencoding.'"?>'.

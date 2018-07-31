@@ -2,7 +2,20 @@
 
 namespace NuSOAP;
 
+use Parser;
+use SoapTransportHttp;
 use Wsdl;
+
+/**
+ * using serialize_val from base.
+ * using debug from base.
+ * appendDebug.
+ * varDump.
+ * setError.
+ * getError.
+ * cleardebug.
+ * serializeEnvelope.
+ */
 
 /**
  * [nu]soapclient higher level class for easy usage.
@@ -427,7 +440,7 @@ class Client extends Base {
      */
     public function loadWSDL() {
         $this->debug('instantiating wsdl class with doc: '.$this->wsdlFile);
-        $this->wsdl = new wsdl('', $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword, $this->timeout, $this->response_timeout, $this->curl_options, $this->use_curl);
+        $this->wsdl = new Wsdl('', $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword, $this->timeout, $this->response_timeout, $this->curl_options, $this->use_curl);
         $this->wsdl->setCredentials($this->username, $this->password, $this->authtype, $this->certRequest);
         $this->wsdl->fetchWSDL($this->wsdlFile);
         $this->checkWSDL();
@@ -477,7 +490,7 @@ class Client extends Base {
                 if ($this->persistentConnection == true && is_object($this->persistentConnection)) {
                     $http =&$this->persistentConnection;
                 } else {
-                    $http = new soap_transport_http($this->endpoint, $this->curl_options, $this->use_curl);
+                    $http = new SoapTransportHttp($this->endpoint, $this->curl_options, $this->use_curl);
                     if ($this->persistentConnection) {
                         $http->usePersistentConnection();
                     }
@@ -575,8 +588,8 @@ class Client extends Base {
             // should be US-ASCII for HTTP 1.0 or ISO-8859-1 for HTTP 1.1
             $this->xml_encoding = 'ISO-8859-1';
         }
-        $this->debug('Use encoding: '.$this->xml_encoding.' when creating nusoap_parser');
-        $parser = new nusoap_parser($data, $this->xml_encoding, $this->operations, $this->decode_utf8);
+        $this->debug('Use encoding: '.$this->xml_encoding.' when creating Parser');
+        $parser = new Parser($data, $this->xml_encoding, $this->operations, $this->decode_utf8);
         // add parser debug data to our debug
         $this->appendDebug($parser->getDebug());
         // if parse errors
