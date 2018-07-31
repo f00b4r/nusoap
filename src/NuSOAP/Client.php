@@ -2,6 +2,8 @@
 
 namespace NuSOAP;
 
+use Wsdl;
+
 /**
  * [nu]soapclient higher level class for easy usage.
  *

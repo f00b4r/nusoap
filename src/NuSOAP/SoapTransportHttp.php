@@ -636,14 +636,16 @@ class SoapTransportHttp extends Base {
      * @returns    boolean    Whether a skippable header was found.
      */
     public function isSkippableCurlHeader(&$data) {
-        $skipHeaders = ['HTTP/1.1 100',
+        $skipHeaders = [
+            'HTTP/1.1 100',
             'HTTP/1.0 301',
             'HTTP/1.1 301',
             'HTTP/1.0 302',
             'HTTP/1.1 302',
             'HTTP/1.0 401',
             'HTTP/1.1 401',
-            'HTTP/1.0 200 Connection established', ];
+            'HTTP/1.0 200 Connection established',
+        ];
         foreach ($skipHeaders as $hd) {
             $prefix = substr($data, 0, strlen($hd));
             if ($prefix == $hd) {

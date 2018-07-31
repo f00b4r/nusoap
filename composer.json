@@ -18,12 +18,7 @@
     "jakub-onderka/php-parallel-lint": "~1.0.0"
   },
   "autoload": {
-    "psr-4": { "NuSOAP\\": "" },
-  },
-  "scripts": {
-    "linter": [
-      "parallel-lint src"
-    ]
+    "psr-4": { "NuSOAP\\": "src/NuSOAP/" }
   },
   "extra": {
     "branch-alias": {

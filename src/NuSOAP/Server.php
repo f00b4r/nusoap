@@ -2,6 +2,8 @@
 
 namespace NuSOAP;
 
+use Wsdl;
+use Fault;
 /**
  *
  * nusoap_server allows the user to create a SOAP server

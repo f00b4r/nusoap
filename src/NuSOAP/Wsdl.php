@@ -2,6 +2,7 @@
 
 namespace NuSOAP;
 
+use SoapVal;
 /**
  * parses a WSDL file, allows access to it's data, other utility methods.
  * also builds WSDL structures programmatically.

@@ -2,6 +2,8 @@
 
 namespace NuSOAP;
 
+
+use SoapVal;
 /**
  *
  * nusoap_base
@@ -26,7 +28,7 @@ class Base
      * @var string
      * @access private
      */
-    var $version = '0.9.5';
+    var $version = '1.0.0';
     /**
      * CVS revision for HTTP headers.
      *
@@ -78,7 +80,7 @@ class Base
      * @var      string
      * @access   public
      */
-    var $soap_defencoding = 'ISO-8859-1';
+    var $soap_defencoding = 'UTF-8';
     //var $soap_defencoding = 'UTF-8';
 
     /**
@@ -803,13 +805,9 @@ class Base
      * @return string The output of var_dump
      * @access public
      */
-    function varDump($data)
+    function varDump()
     {
-        ob_start();
-        var_dump($data);
-        $ret_val = ob_get_contents();
-        ob_end_clean();
-        return $ret_val;
+        return print_r($data, true);
     }
 
     /**
