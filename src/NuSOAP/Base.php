@@ -357,21 +357,6 @@ class Base {
     }
 
     /**
-     * formats a string to be inserted into an HTML stream.
-     *
-     * @param string $str The string to format
-     *
-     * @return string The formatted string
-     *
-     * @deprecated
-     */
-    public function formatDump($str) {
-        $str = htmlspecialchars($str);
-
-        return nl2br($str);
-    }
-
-    /**
      * contracts (changes namespace to prefix) a qualified name.
      *
      * @param string $qname qname
