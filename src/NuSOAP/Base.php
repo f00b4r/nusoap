@@ -649,7 +649,7 @@ class Base {
      *
      * @return string contracted qname
      */
-    public function contractQname($qname) {
+    public function contractQName($qname) {
         // get element namespace
         //$this->xdebug("Contract $qname");
         if (strrpos($qname, ':')) {
