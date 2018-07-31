@@ -37,7 +37,7 @@ class Parser extends Base {
 
     public $default_namespace = '';
 
-    public $namespaces = [];
+    // public $namespaces = [];
 
     public $message = [];
 
