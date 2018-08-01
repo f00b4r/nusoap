@@ -90,7 +90,7 @@ class SoapTransportHttp extends Base {
     public function __construct($url, $curl_options = null, $use_curl = false) {
         parent::__construct();
         $this->debug("ctor url=${url} use_curl=${use_curl} curl_options:");
-        $this->appendDebug($this->varDump($curl_options));
+        $this->debug($this->varDump($curl_options));
         $this->setURL($url);
         if (is_array($curl_options)) {
             $this->ch_options = $curl_options;
@@ -108,7 +108,7 @@ class SoapTransportHttp extends Base {
      */
     public function setCurlOption($option, $value) {
         $this->debug("setCurlOption option=${option}, value=");
-        $this->appendDebug($this->varDump($value));
+        $this->debug($this->varDump($value));
         curl_setopt($this->ch, $option, $value);
     }
 
@@ -322,9 +322,9 @@ class SoapTransportHttp extends Base {
             if (ini_get('safe_mode') || ini_get('open_basedir')) {
                 $this->debug('safe_mode or open_basedir set, so do not set CURLOPT_FOLLOWLOCATION');
                 $this->debug('safe_mode = ');
-                $this->appendDebug($this->varDump(ini_get('safe_mode')));
+                $this->debug($this->varDump(ini_get('safe_mode')));
                 $this->debug('open_basedir = ');
-                $this->appendDebug($this->varDump(ini_get('open_basedir')));
+                $this->debug($this->varDump(ini_get('open_basedir')));
             } else {
                 $this->setCurlOption(CURLOPT_FOLLOWLOCATION, 1);
             }
@@ -506,9 +506,9 @@ class SoapTransportHttp extends Base {
      */
     public function setCredentials($username, $password, $authtype = 'basic', $digestRequest = [], $certRequest = []) {
         $this->debug("setCredentials username=${username} authtype=${authtype} digestRequest=");
-        $this->appendDebug($this->varDump($digestRequest));
+        $this->debug($this->varDump($digestRequest));
         $this->debug('certRequest=');
-        $this->appendDebug($this->varDump($certRequest));
+        $this->debug($this->varDump($certRequest));
         // cf. RFC 2617
         if ($authtype == 'basic') {
             $this->setHeader('Authorization', 'Basic '.base64_encode(str_replace(':', '', $username).':'.$password));

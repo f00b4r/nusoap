@@ -262,7 +262,7 @@ class Wsdl extends Base {
             $wsdl_string = $tr->send('', $this->timeout, $this->response_timeout);
             //$this->debug("WSDL request\n" . $tr->outgoing_payload);
             //$this->debug("WSDL response\n" . $tr->incoming_payload);
-            $this->appendDebug($tr->getDebug());
+            $this->debug($tr->getDebug());
             // catch errors
             if ($err = $tr->getError()) {
                 $errstr = 'Getting '.$wsdl.' - HTTP ERROR: '.$err;
@@ -347,7 +347,7 @@ class Wsdl extends Base {
     public function start_element($parser, $name, $attrs) {
         if ($this->status == 'schema') {
             $this->currentSchema->schemaStartElement($parser, $name, $attrs);
-            $this->appendDebug($this->currentSchema->getDebug());
+            $this->debug($this->currentSchema->getDebug());
             $this->currentSchema->clearDebug();
         } elseif (preg_match('/schema$/', $name)) {
             $this->debug('Parsing WSDL schema');
@@ -355,7 +355,7 @@ class Wsdl extends Base {
             $this->status        = 'schema';
             $this->currentSchema = new XMLSchema('', '', $this->namespaces);
             $this->currentSchema->schemaStartElement($parser, $name, $attrs);
-            $this->appendDebug($this->currentSchema->getDebug());
+            $this->debug($this->currentSchema->getDebug());
             $this->currentSchema->clearDebug();
         } else {
             // position in the total number of elements, starting from 0
@@ -585,7 +585,7 @@ class Wsdl extends Base {
         preg_match('/schema$/', $name)
         ) {
             $this->status = '';
-            $this->appendDebug($this->currentSchema->getDebug());
+            $this->debug($this->currentSchema->getDebug());
             $this->currentSchema->clearDebug();
             $this->schemas[$this->currentSchema->schemaTargetNamespace][] = $this->currentSchema;
             $this->debug('Parsing WSDL schema done');
@@ -630,7 +630,7 @@ class Wsdl extends Base {
      */
     public function setCredentials($username, $password, $authtype = 'basic', $certRequest = []) {
         $this->debug('setCredentials username='.$username.' authtype='.$authtype.' certRequest=');
-        $this->appendDebug($this->varDump($certRequest));
+        $this->debug($this->varDump($certRequest));
         $this->username    = $username;
         $this->password    = $password;
         $this->authtype    = $authtype;
@@ -784,7 +784,7 @@ class Wsdl extends Base {
             for ($i = 0; $i < count($this->schemas[$ns]); $i++) {
                 $xs = &$this->schemas[$ns][$i];
                 $t  = $xs->getTypeDef($type);
-                $this->appendDebug($xs->getDebug());
+                $this->debug($xs->getDebug());
                 $xs->clearDebug();
                 if ($t) {
                     $this->debug('in getTypeDef: found type '.$type);
@@ -1096,7 +1096,7 @@ class Wsdl extends Base {
      */
     public function parametersMatchWrapped($type, &$parameters) {
         $this->debug('in parametersMatchWrapped type='.$type.', parameters=');
-        $this->appendDebug($this->varDump($parameters));
+        $this->debug($this->varDump($parameters));
 
         // split type into namespace:unqualified-type
         if (strpos($type, ':')) {
@@ -1122,7 +1122,7 @@ class Wsdl extends Base {
             return false;
         }
         $this->debug('in parametersMatchWrapped: found typeDef=');
-        $this->appendDebug($this->varDump($typeDef));
+        $this->debug($this->varDump($typeDef));
         if (substr($uqType, -1) == '^') {
             $uqType = substr($uqType, 0, -1);
         }
@@ -1183,7 +1183,7 @@ class Wsdl extends Base {
      */
     public function serializeRPCParameters($operation, $direction, $parameters, $bindingType = 'soap') {
         $this->debug('in serializeRPCParameters: operation='.$operation.', direction='.$direction.', XMLSchemaVersion='.$this->XMLSchemaVersion.', bindingType='.$bindingType);
-        $this->appendDebug('parameters='.$this->varDump($parameters));
+        $this->debug('parameters='.$this->varDump($parameters));
 
         if ($direction != 'input' && $direction != 'output') {
             $this->debug('The value of the \$direction argument needs to be either "input" or "output"');
@@ -1198,7 +1198,7 @@ class Wsdl extends Base {
             return false;
         }
         $this->debug('in serializeRPCParameters: opData:');
-        $this->appendDebug($this->varDump($opData));
+        $this->debug($this->varDump($opData));
 
         // Get encoding style for output and set to current
         $encodingStyle = 'http://schemas.xmlsoap.org/soap/encoding/';
@@ -1288,7 +1288,7 @@ class Wsdl extends Base {
      */
     public function serializeParameters($operation, $direction, $parameters) {
         $this->debug('in serializeParameters: operation='.$operation.', direction='.$direction.', XMLSchemaVersion='.$this->XMLSchemaVersion);
-        $this->appendDebug('parameters='.$this->varDump($parameters));
+        $this->debug('parameters='.$this->varDump($parameters));
 
         if ($direction != 'input' && $direction != 'output') {
             $this->debug('The value of the \$direction argument needs to be either "input" or "output"');
@@ -1303,7 +1303,7 @@ class Wsdl extends Base {
             return false;
         }
         $this->debug('opData:');
-        $this->appendDebug($this->varDump($opData));
+        $this->debug($this->varDump($opData));
 
         // Get encoding style for output and set to current
         $encodingStyle = 'http://schemas.xmlsoap.org/soap/encoding/';
@@ -1368,7 +1368,7 @@ class Wsdl extends Base {
      */
     public function serializeType($name, $type, $value, $use = 'encoded', $encodingStyle = false, $unqualified = false) {
         $this->debug('in serializeType: name='.$name.', type='.$type.', use='.$use.', encodingStyle='.$encodingStyle.', unqualified='.($unqualified ? 'unqualified' : 'qualified'));
-        $this->appendDebug('value='.$this->varDump($value));
+        $this->debug('value='.$this->varDump($value));
         if ($use == 'encoded' && $encodingStyle) {
             $encodingStyle = ' SOAP-ENV:encodingStyle="'.$encodingStyle.'"';
         }
@@ -1515,7 +1515,7 @@ class Wsdl extends Base {
             return false;
         }
         $this->debug('in serializeType: found typeDef');
-        $this->appendDebug('typeDef='.$this->varDump($typeDef));
+        $this->debug('typeDef='.$this->varDump($typeDef));
         if (substr($uqType, -1) == '^') {
             $uqType = substr($uqType, 0, -1);
         }

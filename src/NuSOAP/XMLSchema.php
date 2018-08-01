@@ -262,7 +262,7 @@ class XMLSchema extends Base {
             case 'attribute':    // complexType attribute
                 //$this->xdebug("parsing attribute $attrs[name] $attrs[ref] of value: ".$attrs['http://schemas.xmlsoap.org/wsdl/:arrayType']);
                 $this->xdebug('parsing attribute:');
-                $this->appendDebug($this->varDump($attrs));
+                $this->debug($this->varDump($attrs));
                 if (!isset($attrs['form'])) {
                     // TODO: handle globals
                     $attrs['form'] = $this->schemaInfo['attributeFormDefault'];
@@ -967,7 +967,7 @@ class XMLSchema extends Base {
         ];
 
         $this->xdebug("addComplexType ${name}:");
-        $this->appendDebug($this->varDump($this->complexTypes[$name]));
+        $this->debug($this->varDump($this->complexTypes[$name]));
     }
 
     /**
@@ -992,7 +992,7 @@ class XMLSchema extends Base {
         ];
 
         $this->xdebug("addSimpleType ${name}:");
-        $this->appendDebug($this->varDump($this->simpleTypes[$name]));
+        $this->debug($this->varDump($this->simpleTypes[$name]));
     }
 
     /**
@@ -1010,6 +1010,6 @@ class XMLSchema extends Base {
         $this->elements[$attrs['name']]['typeClass'] = 'element';
 
         $this->xdebug('addElement '.$attrs['name']);
-        $this->appendDebug($this->varDump($this->elements[$attrs['name']]));
+        $this->debug($this->varDump($this->elements[$attrs['name']]));
     }
 }

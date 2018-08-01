@@ -2,6 +2,8 @@
 
 namespace NuSOAP;
 
+use \Monolog\Logger;
+
 trait LoggerTrait {
     /**
      * the debug level for this instance.
@@ -11,11 +13,25 @@ trait LoggerTrait {
     private $debugLevel;
 
     /**
-     * Current debug string (manipulated by debug/appendDebug/clearDebug/getDebug/getDebugAsXMLComment).
+     * Current debug string (manipulated by debug/debug/clearDebug/getDebug/getDebugAsXMLComment).
      *
      * @var string
      */
-    public $debug_str = '';
+    private $logger;
+
+    public function setLogger(Logger $logger) {
+        if ($logger instanceof \Monolog\Logger) {
+            $this->logger = $logger;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getLogger() {
+        return $this->logger;
+    }
 
     /**
      * gets the debug level for this instance.
@@ -38,13 +54,13 @@ trait LoggerTrait {
     /**
      * adds debug data to the instance debug string with formatting.
      *
-     * @param string $string debug data
-     * @param mixed  $time
-     * @param mixed  $class
+     * @param string $message
+     * @param array  $context
+     * @param string $log_level
      */
-    public function debug($string, $time = true, $class = true) {
-        if ($this->getDebugLevel() > 0) {
-            $this->debug_str .= ($time ? $this->getmicrotime() : '').($class ? get_class($this) : '').$string."\n";
+    public function debug($message = '', array $context = [], $log_level = 'debug') {
+        if ($this->getDebugLevel() > 0 && $this->getLogger() instanceof \Monolog\Logger) {
+            return $this->logger->log($log_level, $message);
         }
 
         return true;
@@ -53,19 +69,21 @@ trait LoggerTrait {
     /**
      * adds debug data to the instance debug string without formatting.
      *
-     * @param string $string debug data
+     * @param string $message
+     * @param array  $context
+     * @param string $log_level
      */
-    public function appendDebug($string) {
-        return $this->debug($string, false, false);
+    public function debug($message, $context = [], $log_level) {
+        // DEPRECATED: PLEASE USE DIRECTLY DEBUG FUNCTION
+        return $this->debug($message, $context, $log_level);
     }
 
     /**
      * clears the current debug data for this instance.
      */
     public function clearDebug() {
-        // it would be nice to use a memory stream here to use
-        // memory more efficiently
-        $this->debug_str = '';
+        // DEPRECATED IN FAVOR IF MONOLOG
+        return true;
     }
 
     /**
@@ -73,44 +91,8 @@ trait LoggerTrait {
      *
      * @return debug data
      */
-    public function &getDebug() {
-        // it would be nice to use a memory stream here to use
-        // memory more efficiently
-        return $this->debug_str;
-    }
-
-    /**
-     * gets the current debug data for this instance as an XML comment
-     * this may change the contents of the debug data.
-     *
-     * @return debug data as an XML comment
-     */
-    public function &getDebugAsXMLComment() {
-        // it would be nice to use a memory stream here to use
-        // memory more efficiently
-        while (strpos($this->debug_str, '--')) {
-            $this->debug_str = str_replace('--', '- -', $this->debug_str);
-        }
-        $ret = "<!--\n".$this->debug_str."\n-->";
-
-        return $ret;
-    }
-
-    /**
-     * returns the time in ODBC canonical form with microseconds.
-     *
-     * @return string The time in ODBC canonical form with microseconds
-     */
-    public function getmicrotime() {
-        if (function_exists('gettimeofday')) {
-            $tod  = gettimeofday();
-            $sec  = $tod['sec'];
-            $usec = $tod['usec'];
-        } else {
-            $sec  = time();
-            $usec = 0;
-        }
-
-        return strftime('%Y-%m-%d %H:%M:%S', $sec).'.'.sprintf('%06d', $usec);
+    public function getDebug() {
+        // DEPRECATED IN FAVOR IF MONOLOG
+        return '';
     }
 }

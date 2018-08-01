@@ -197,7 +197,7 @@ class Server extends Base {
 
         if (isset($_SERVER)) {
             $this->debug('_SERVER is defined:');
-            $this->appendDebug($this->varDump($_SERVER));
+            $this->debug($this->varDump($_SERVER));
         } else {
             $this->debug('_SERVER is defined.');
         }
@@ -224,7 +224,7 @@ class Server extends Base {
                 $this->wsdl            = new Wsdl($wsdl);
                 $this->externalWSDLURL = $wsdl;
             }
-            $this->appendDebug($this->wsdl->getDebug());
+            $this->debug($this->wsdl->getDebug());
             $this->wsdl->clearDebug();
             if ($err = $this->wsdl->getError()) {
                 die('WSDL ERROR: '.$err);
@@ -285,7 +285,7 @@ class Server extends Base {
                 echo $this->wsdl->serialize($this->debug_flag);
                 if ($this->debug_flag) {
                     $this->debug('wsdl:');
-                    $this->appendDebug($this->varDump($this->wsdl));
+                    $this->debug($this->varDump($this->wsdl));
                     echo $this->getDebugAsXMLComment();
                 }
             } else {
@@ -466,11 +466,11 @@ class Server extends Base {
         if ($this->wsdl) {
             if ($this->opData = $this->wsdl->getOperationData($this->methodname)) {
                 $this->debug('in invoke_method, found WSDL operation='.$this->methodname);
-                $this->appendDebug('opData='.$this->varDump($this->opData));
+                $this->debug('opData='.$this->varDump($this->opData));
             } elseif ($this->opData = $this->wsdl->getOperationDataForSoapAction($this->SOAPAction)) {
                 // Note: hopefully this case will only be used for doc/lit, since rpc services should have wrapper element
                 $this->debug('in invoke_method, found WSDL soapAction='.$this->SOAPAction.' for operation='.$this->opData['name']);
-                $this->appendDebug('opData='.$this->varDump($this->opData));
+                $this->debug('opData='.$this->varDump($this->opData));
                 $this->methodname = $this->opData['name'];
             } else {
                 $this->debug('in invoke_method, no WSDL for operation='.$this->methodname);
@@ -549,7 +549,7 @@ class Server extends Base {
 
         // if there are parameters to pass
         $this->debug('in invoke_method, params:');
-        $this->appendDebug($this->varDump($this->methodparams));
+        $this->debug($this->varDump($this->methodparams));
         $this->debug("in invoke_method, calling '{$this->methodname}'");
         if (!function_exists('call_user_func_array')) {
             if ($class == '') {
@@ -600,7 +600,7 @@ class Server extends Base {
             }
         }
         $this->debug('in invoke_method, methodreturn:');
-        $this->appendDebug($this->varDump($this->methodreturn));
+        $this->debug($this->varDump($this->methodreturn));
         $this->debug("in invoke_method, called method {$this->methodname}, received data of type ".gettype($this->methodreturn));
     }
 
@@ -640,7 +640,7 @@ class Server extends Base {
                     $opParams = [$this->methodreturn];
                 }
                 $return_val = $this->wsdl->serializeRPCParameters($this->methodname, 'output', $opParams);
-                $this->appendDebug($this->wsdl->getDebug());
+                $this->debug($this->wsdl->getDebug());
                 $this->wsdl->clearDebug();
                 if ($errstr = $this->wsdl->getError()) {
                     $this->debug('got wsdl error: '.$errstr);
@@ -658,7 +658,7 @@ class Server extends Base {
             }
         }
         $this->debug('return value:');
-        $this->appendDebug($this->varDump($return_val));
+        $this->debug($this->varDump($return_val));
 
         $this->debug('serializing response');
         if ($this->wsdl) {
@@ -690,7 +690,7 @@ class Server extends Base {
         $this->result = 'successful';
         if ($this->wsdl) {
             //if($this->debug_flag){
-            $this->appendDebug($this->wsdl->getDebug());
+            $this->debug($this->wsdl->getDebug());
             //	}
             if (isset($this->opData['output']['encodingStyle'])) {
                 $encodingStyle = $this->opData['output']['encodingStyle'];
@@ -814,7 +814,7 @@ class Server extends Base {
      */
     public function parseRequest($headers, $data) {
         $this->debug('Entering parseRequest() for data of length '.strlen($data).' headers:');
-        $this->appendDebug($this->varDump($headers));
+        $this->debug($this->varDump($headers));
         if (!isset($headers['content-type'])) {
             $this->setError('Request not of type text/xml (no content-type header)');
 

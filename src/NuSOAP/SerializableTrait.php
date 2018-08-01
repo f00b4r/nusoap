@@ -24,13 +24,13 @@ trait SerializableTrait {
      */
     public function serialize_val($val, $name = false, $type = false, $name_ns = false, $type_ns = false, $attributes = false, $use = 'encoded', $soapval = false) {
         $this->debug('in serialize_val: name='.$name.', type='.$type.', name_ns='.$name_ns.', type_ns='.$type_ns.', use='.$use.', soapval='.$soapval);
-        $this->appendDebug('value='.$this->varDump($val));
-        $this->appendDebug('attributes='.$this->varDump($attributes));
+        $this->debug('value='.$this->varDump($val));
+        $this->debug('attributes='.$this->varDump($attributes));
 
         if (is_object($val) && $val instanceof \NuSOAP\SoapVal && (!$soapval)) {
             $this->debug('serialize_val: serialize soapval');
             $xml = $val->serialize($use);
-            $this->appendDebug($val->getDebug());
+            $this->debug($val->getDebug());
             $val->clearDebug();
             $this->debug('serialize_val of soapval returning '.$xml);
 
@@ -158,7 +158,7 @@ trait SerializableTrait {
                   if ($val instanceof \NuSOAP\SoapVal) {
                       $this->debug('serialize_val: serialize soapval object');
                       $pXml = $val->serialize($use);
-                      $this->appendDebug($val->getDebug());
+                      $this->debug($val->getDebug());
                       $val->clearDebug();
                   } else {
                       if (!$name) {

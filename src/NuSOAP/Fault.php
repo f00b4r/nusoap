@@ -2,9 +2,8 @@
 
 namespace NuSOAP;
 
-/**
- * using serialize_val from base.
- */
+use Base;
+use SerializableTrait;
 
 /**
  * Contains information for a SOAP fault.
@@ -16,6 +15,8 @@ namespace NuSOAP;
  * @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
  */
 class Fault extends Base {
+    use SerializableTrait;
+
     /**
      * The fault code (client|server).
      *
@@ -52,7 +53,7 @@ class Fault extends Base {
      * @param string $faultstring human readable error message
      * @param mixed  $faultdetail detail, typically a string or array of string
      */
-    public function __construct($faultcode, $faultactor = '', $faultstring = '', $faultdetail = '') {
+    public function __construct(string $faultcode, string $faultactor = '', string $faultstring = '', $faultdetail = '') {
         parent::__construct();
         $this->faultcode   = $faultcode;
         $this->faultactor  = $faultactor;
@@ -70,7 +71,8 @@ class Fault extends Base {
         foreach ($this->namespaces as $k => $v) {
             $ns_string .= "\n".' xmlns:'.$k.'="'.$v.'"';
         }
-        $return_msg =
+
+        return
             '<?xml version="1.0" encoding="'.$this->soap_defencoding.'"?>'.
             '<SOAP-ENV:Envelope SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"'.$ns_string.">\n".
             '<SOAP-ENV:Body>'.
@@ -82,7 +84,5 @@ class Fault extends Base {
             '</SOAP-ENV:Fault>'.
             '</SOAP-ENV:Body>'.
             '</SOAP-ENV:Envelope>';
-
-        return $return_msg;
     }
 }

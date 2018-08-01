@@ -300,9 +300,9 @@ class Base {
 
         $this->debug('In serializeEnvelope length='.strlen($body).' body (max 1000 characters)='.substr($body, 0, 1000).' style='.$style.' use='.$use.' encodingStyle='.$encodingStyle);
         $this->debug('headers:');
-        $this->appendDebug($this->varDump($headers));
+        $this->debug($this->varDump($headers));
         $this->debug('namespaces:');
-        $this->appendDebug($this->varDump($namespaces));
+        $this->debug($this->varDump($namespaces));
 
         // serialize namespaces
         $ns_string = '';
