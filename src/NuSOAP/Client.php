@@ -2,6 +2,7 @@
 
 namespace NuSOAP;
 
+use Fault;
 use Parser;
 use SoapTransportHttp;
 use Wsdl;
@@ -9,7 +10,6 @@ use Wsdl;
 /**
  * using serialize_val from base.
  * using debug from base.
- * appendDebug.
  * varDump.
  * setError.
  * getError.
@@ -125,24 +125,38 @@ class Client extends Base {
     // fault related variables
 
     /**
+     * @var has_fault
+     */
+    public $has_fault = false;
+
+    /**
      * @var fault
      */
     public $fault;
 
-    /**
-     * @var faultcode
-     */
-    public $faultcode;
+    public function hasFault() {
+        return $this->has_fault;
+    }
 
-    /**
-     * @var faultstring
-     */
-    public $faultstring;
+    public function setFault(Fault $fault) {
+        $this->fault     = $fault;
+        $this->has_fault = true;
 
-    /**
-     * @var faultdetail
-     */
-    public $faultdetail;
+        return true;
+    }
+
+    public function getFault() {
+        if ($this->fault instanceof Fault) {
+            return $this->fault;
+        }
+
+        return false;
+    }
+
+    public function resetFault() {
+        $this->fault     = null;
+        $this->has_fault = false;
+    }
 
     /**
      * constructor.
@@ -169,7 +183,7 @@ class Client extends Base {
         $this->portName         = $portName;
 
         $this->debug("ctor wsdl=${wsdl} timeout=${timeout} response_timeout=${response_timeout}");
-        $this->appendDebug('endpoint='.$this->varDump($endpoint));
+        $this->debug('endpoint='.$this->varDump($endpoint));
 
         // make values
         if ($wsdl) {
@@ -218,18 +232,16 @@ class Client extends Base {
      */
     public function call($operation, $params = [], $namespace = 'http://tempuri.org', $soapAction = '', $headers = false, $rpcParams = null, $style = 'rpc', $use = 'encoded') {
         $this->operation = $operation;
-        $this->fault     = false;
+        $this->resetFault();
         $this->setError('');
         $this->request      = '';
         $this->response     = '';
         $this->responseData = '';
-        $this->faultstring  = '';
-        $this->faultcode    = '';
         $this->opData       = [];
 
         $this->debug("call: operation=${operation}, namespace=${namespace}, soapAction=${soapAction}, rpcParams=${rpcParams}, style=${style}, use=${use}, endpointType={$this->endpointType}");
-        $this->appendDebug('params='.$this->varDump($params));
-        $this->appendDebug('headers='.$this->varDump($headers));
+        $this->debug('params='.$this->varDump($params));
+        $this->debug('headers='.$this->varDump($headers));
         if ($headers) {
             $this->requestHeaders = $headers;
         }
@@ -244,7 +256,7 @@ class Client extends Base {
             // use WSDL for operation
             $this->opData = $opData;
             $this->debug('found operation');
-            $this->appendDebug('opData='.$this->varDump($opData));
+            $this->debug('opData='.$this->varDump($opData));
             if (isset($opData['soapAction'])) {
                 $soapAction = $opData['soapAction'];
             }
@@ -281,7 +293,7 @@ class Client extends Base {
             } else {
                 $encodingStyle = '';
             }
-            $this->appendDebug($this->wsdl->getDebug());
+            $this->debug($this->wsdl->getDebug());
             $this->wsdl->clearDebug();
             if ($errstr = $this->wsdl->getError()) {
                 $this->debug('got wsdl error: '.$errstr);
@@ -291,7 +303,7 @@ class Client extends Base {
             }
         } elseif ($this->endpointType == 'wsdl') {
             // operation not in WSDL
-            $this->appendDebug($this->wsdl->getDebug());
+            $this->debug($this->wsdl->getDebug());
             $this->wsdl->clearDebug();
             $this->setError('operation '.$operation.' not present in WSDL.');
             $this->debug("operation '${operation}' not present in WSDL.");
@@ -362,13 +374,13 @@ class Client extends Base {
         }
         $this->return = $return;
         $this->debug('sent message successfully and got a(n) '.gettype($return));
-        $this->appendDebug('return='.$this->varDump($return));
+        $this->debug('return='.$this->varDump($return));
 
         // fault?
         if (is_array($return) && isset($return['faultcode'])) {
             $this->debug('got fault');
             $this->setError($return['faultcode'].': '.$return['faultstring']);
-            $this->fault = true;
+            $this->setFault(new Fault($return['faultcode'], '', $return['faultstring'], $return));
             foreach ($return as $k => $v) {
                 $this->{$k} = $v;
                 if (is_array($v)) {
@@ -394,7 +406,7 @@ class Client extends Base {
             // single 'out' parameter (normally the return value)
             $return = array_shift($return);
             $this->debug('return shifted value: ');
-            $this->appendDebug($this->varDump($return));
+            $this->debug($this->varDump($return));
 
             return $return;
             // nothing returned (ie, echoVoid)
@@ -407,28 +419,28 @@ class Client extends Base {
      * check WSDL passed as an instance or pulled from an endpoint.
      */
     public function checkWSDL() {
-        $this->appendDebug($this->wsdl->getDebug());
+        $this->debug($this->wsdl->getDebug());
         $this->wsdl->clearDebug();
         $this->debug('checkWSDL');
         // catch errors
         if ($errstr = $this->wsdl->getError()) {
-            $this->appendDebug($this->wsdl->getDebug());
+            $this->debug($this->wsdl->getDebug());
             $this->wsdl->clearDebug();
             $this->debug('got wsdl error: '.$errstr);
             $this->setError('wsdl error: '.$errstr);
         } elseif ($this->operations = $this->wsdl->getOperations($this->portName, 'soap')) {
-            $this->appendDebug($this->wsdl->getDebug());
+            $this->debug($this->wsdl->getDebug());
             $this->wsdl->clearDebug();
             $this->bindingType = 'soap';
             $this->debug('got '.count($this->operations).' operations from wsdl '.$this->wsdlFile.' for binding type '.$this->bindingType);
         } elseif ($this->operations = $this->wsdl->getOperations($this->portName, 'soap12')) {
-            $this->appendDebug($this->wsdl->getDebug());
+            $this->debug($this->wsdl->getDebug());
             $this->wsdl->clearDebug();
             $this->bindingType = 'soap12';
             $this->debug('got '.count($this->operations).' operations from wsdl '.$this->wsdlFile.' for binding type '.$this->bindingType);
             $this->debug('**************** WARNING: SOAP 1.2 BINDING *****************');
         } else {
-            $this->appendDebug($this->wsdl->getDebug());
+            $this->debug($this->wsdl->getDebug());
             $this->wsdl->clearDebug();
             $this->debug('getOperations returned false');
             $this->setError('no operations defined in the WSDL document!');
@@ -523,7 +535,7 @@ class Client extends Base {
                 }
                 $this->request  = $http->outgoing_payload;
                 $this->response = $http->incoming_payload;
-                $this->appendDebug($http->getDebug());
+                $this->debug($http->getDebug());
                 $this->UpdateCookies($http->incoming_cookies);
 
                 // save transport object if using persistent connections
@@ -565,7 +577,7 @@ class Client extends Base {
      */
     public function parseResponse($headers, $data) {
         $this->debug('Entering parseResponse() for data of length '.strlen($data).' headers:');
-        $this->appendDebug($this->varDump($headers));
+        $this->debug($this->varDump($headers));
         if (!isset($headers['content-type'])) {
             $this->setError('Response not of type text/xml (no content-type header)');
 
@@ -591,7 +603,7 @@ class Client extends Base {
         $this->debug('Use encoding: '.$this->xml_encoding.' when creating Parser');
         $parser = new Parser($data, $this->xml_encoding, $this->operations, $this->decode_utf8);
         // add parser debug data to our debug
-        $this->appendDebug($parser->getDebug());
+        $this->debug($parser->getDebug());
         // if parse errors
         if ($errstr = $parser->getError()) {
             $this->setError($errstr);
@@ -622,7 +634,7 @@ class Client extends Base {
      */
     public function setCurlOption($option, $value) {
         $this->debug("setCurlOption option=${option}, value=");
-        $this->appendDebug($this->varDump($value));
+        $this->debug($this->varDump($value));
         $this->curl_options[$option] = $value;
     }
 
@@ -643,7 +655,7 @@ class Client extends Base {
      */
     public function setHeaders($headers) {
         $this->debug('setHeaders headers=');
-        $this->appendDebug($this->varDump($headers));
+        $this->debug($this->varDump($headers));
         $this->requestHeaders = $headers;
     }
 
@@ -690,7 +702,7 @@ class Client extends Base {
      */
     public function setCredentials($username, $password, $authtype = 'basic', $certRequest = []) {
         $this->debug("setCredentials username=${username} authtype=${authtype} certRequest=");
-        $this->appendDebug($this->varDump($certRequest));
+        $this->debug($this->varDump($certRequest));
         $this->username    = $username;
         $this->password    = $password;
         $this->authtype    = $authtype;
@@ -814,7 +826,7 @@ class Client extends Base {
      */
     public function _getProxyClassCode($r) {
         $this->debug("in getProxy endpointType={$this->endpointType}");
-        $this->appendDebug('wsdl='.$this->varDump($this->wsdl));
+        $this->debug('wsdl='.$this->varDump($this->wsdl));
         if ($this->endpointType != 'wsdl') {
             $evalStr = 'A proxy can only be created for a WSDL client';
             $this->setError($evalStr);
