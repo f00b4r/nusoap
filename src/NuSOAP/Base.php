@@ -178,22 +178,6 @@ class Base {
     ];
 
     /**
-     * XML entities to convert.
-     *
-     * @var array
-     *
-     * @deprecated
-     * @see    expandEntities
-     */
-    public $xmlEntities = [
-        'quot' => '"',
-        'amp'  => '&',
-        'lt'   => '<',
-        'gt'   => '>',
-        'apos' => "'",
-    ];
-
-    /**
      * constructor.
      *
      * @param mixed $debugLevel
@@ -220,23 +204,6 @@ class Base {
      */
     public function getTitle() {
         return $this->title;
-    }
-
-    /**
-     * expands entities, e.g. changes '<' to '&lt;'.
-     *
-     * @param string $val the string in which to expand entities
-     */
-    public function expandEntities($val) {
-        if ($this->charencoding) {
-            $val = str_replace('&', '&amp;', $val);
-            $val = str_replace("'", '&apos;', $val);
-            $val = str_replace('"', '&quot;', $val);
-            $val = str_replace('<', '&lt;', $val);
-            $val = str_replace('>', '&gt;', $val);
-        }
-
-        return $val;
     }
 
     /**

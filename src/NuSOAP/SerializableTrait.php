@@ -8,6 +8,22 @@ trait SerializableTrait {
     use LoggerTrait;
 
     /**
+     * XML entities to convert.
+     *
+     * @var array
+     *
+     * @deprecated
+     * @see    expandEntities
+     */
+    public $xmlEntities = [
+        'quot' => '"',
+        'amp'  => '&',
+        'lt'   => '<',
+        'gt'   => '>',
+        'apos' => "'",
+    ];
+
+    /**
      * serializes PHP values in accordance w/ section 5. Type information is
      * not serialized if $use == 'literal'.
      *
@@ -31,8 +47,8 @@ trait SerializableTrait {
             $this->debug('serialize_val: serialize soapval');
             $xml = $val->serialize($use);
             $this->debug($val->getDebug());
-            $val->clearDebug();
             $this->debug('serialize_val of soapval returning '.$xml);
+            $val->clearDebug();
 
             return $xml;
         }
@@ -286,5 +302,22 @@ trait SerializableTrait {
         $this->debug('serialize_val returning '.$xml);
 
         return $xml;
+    }
+
+    /**
+     * expands entities, e.g. changes '<' to '&lt;'.
+     *
+     * @param string $val the string in which to expand entities
+     */
+    public function expandEntities($val) {
+        if ($this->charencoding) {
+            $val = str_replace('&', '&amp;', $val);
+            $val = str_replace("'", '&apos;', $val);
+            $val = str_replace('"', '&quot;', $val);
+            $val = str_replace('<', '&lt;', $val);
+            $val = str_replace('>', '&gt;', $val);
+        }
+
+        return $val;
     }
 }

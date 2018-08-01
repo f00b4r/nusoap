@@ -2,6 +2,7 @@
 
 namespace NuSOAP;
 
+use SerializableTrait;
 use SoapTransportHttp;
 use SoapVal;
 use XMLSchema;
@@ -16,6 +17,8 @@ use XMLSchema;
  * @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
  */
 class Wsdl extends Base {
+    use SerializableTrait;
+
     // URL or filename of the root of this WSDL
     public $wsdl;
 
