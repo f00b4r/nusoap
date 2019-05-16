@@ -4566,7 +4566,7 @@ class nusoap_server extends nusoap_base
         }
         if (false == $namespace) {
         }
-        if (false == $soapaction) {
+        if (false === $soapaction) {
             if (isset($_SERVER)) {
                 $SERVER_NAME = $_SERVER['SERVER_NAME'];
                 $SCRIPT_NAME = isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
