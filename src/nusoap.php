@@ -221,6 +221,12 @@ class nusoap_base
         'lt' => '<', 'gt' => '>', 'apos' => "'");
 
     /**
+     * @var string
+     */
+    var $contentType;
+
+
+    /**
      * constructor
      *
      * @access    public
@@ -228,8 +234,8 @@ class nusoap_base
     function __construct()
     {
         $this->debugLevel = $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'];
+        $this->contentType = "text/xml";
     }
-
     /**
      * gets the global debug level, which applies to future instances
      *
@@ -3200,11 +3206,7 @@ class soap_transport_http extends nusoap_base
                 $err = 'cURL ERROR: ' . curl_errno($this->ch) . ': ' . $cErr . '<br>';
                 // TODO: there is a PHP bug that can cause this to SEGV for CURLINFO_CONTENT_TYPE
                 foreach (curl_getinfo($this->ch) as $k => $v) {
-                    if (is_array($v)) {
-                        $this->debug("$k: " . json_encode($v));
-                    } else {
-                        $this->debug("$k: $v<br>");
-                    }
+                    $err .= "$k: $v<br>";
                 }
                 $this->debug($err);
                 $this->setError($err);
@@ -3947,13 +3949,8 @@ class nusoap_server extends nusoap_base
                     }
                 }
                 $this->headers[$k] = $v;
-                if (is_array($v)) {
-                    $this->request .= "$k: " . json_encode($v) . "\r\n";
-                    $this->debug("$k: " . json_encode($v));
-                } else {
-                    $this->request .= "$k: $v\r\n";
-                    $this->debug("$k: $v");
-                }
+                $this->request .= "$k: $v\r\n";
+                $this->debug("$k: $v");
             }
         } elseif (is_array($HTTP_SERVER_VARS)) {
             $this->debug("In parse_http_headers, use HTTP_SERVER_VARS");
@@ -4255,7 +4252,6 @@ class nusoap_server extends nusoap_base
                     //}
                     $opParams = array($this->methodreturn);
                 }
-                $opParams = isset($opParams) ? $opParams : [];
                 $return_val = $this->wsdl->serializeRPCParameters($this->methodname, 'output', $opParams);
                 $this->appendDebug($this->wsdl->getDebug());
                 $this->wsdl->clearDebug();
@@ -4566,7 +4562,7 @@ class nusoap_server extends nusoap_base
         }
         if (false == $namespace) {
         }
-        if (false === $soapaction) {
+        if (false == $soapaction) {
             if (isset($_SERVER)) {
                 $SERVER_NAME = $_SERVER['SERVER_NAME'];
                 $SCRIPT_NAME = isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
@@ -7563,7 +7559,7 @@ class nusoap_client extends nusoap_base
             // no WSDL
             //$this->namespaces['ns1'] = $namespace;
             $nsPrefix = 'ns' . rand(1000, 9999);
-            // serialize 
+            // serialize
             $payload = '';
             if (is_string($params)) {
                 $this->debug("serializing param string for operation $operation");
@@ -8185,8 +8181,19 @@ class nusoap_client extends nusoap_base
      */
     function getHTTPContentType()
     {
-        return 'text/xml';
+        return $this->contentType;
     }
+
+    /**
+     * allows you to change the HTTP ContentType of the request.
+     *
+     * @param string $contenTypeNew
+     * @return void
+     */
+    function setHTTPContentType($contenTypeNew = "text/xml"){
+        $this->contentType = $contenTypeNew;
+    }
+
 
     /**
      * gets the HTTP content type charset for the current request.
