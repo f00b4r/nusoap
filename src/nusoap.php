@@ -1931,6 +1931,7 @@ class nusoap_xmlschema extends nusoap_base
      */
     function serializeTypeDef($type)
     {
+        $str = '';
         //print "in sTD() for type $type<br>";
         if ($typeDef = $this->getTypeDef($type)) {
             $str .= '<' . $type;
@@ -1968,6 +1969,7 @@ class nusoap_xmlschema extends nusoap_base
      */
     function typeToForm($name, $type)
     {
+        $buffer = '';
         // get typedef
         if ($typeDef = $this->getTypeDef($type)) {
             // if struct
@@ -7225,6 +7227,7 @@ class nusoap_parser extends nusoap_base
         $this->debug('in buildVal() for ' . $this->message[$pos]['name'] . "(pos $pos) of type " . $this->message[$pos]['type']);
         // if there are children...
         if ($this->message[$pos]['children'] != '') {
+            $params = [];
             $this->debug('in buildVal, there are children');
             $children = explode('|', $this->message[$pos]['children']);
             array_shift($children); // knock off empty
