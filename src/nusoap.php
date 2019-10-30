@@ -221,6 +221,14 @@ class nusoap_base
         'lt' => '<', 'gt' => '>', 'apos' => "'");
 
     /**
+     * HTTP Content-type to be used for SOAP calls and responses
+     *
+     * @var string
+     */
+    var $contentType = "text/xml";
+
+
+    /**
      * constructor
      *
      * @access    public
@@ -4436,11 +4444,11 @@ class nusoap_server extends nusoap_base
         $this->debug('Entering parseRequest() for data of length ' . strlen($data) . ' headers:');
         $this->appendDebug($this->varDump($headers));
         if (!isset($headers['content-type'])) {
-            $this->setError('Request not of type text/xml (no content-type header)');
+            $this->setError('Request not of type '.$this->contentType.' (no content-type header)');
             return false;
         }
-        if (!strstr($headers['content-type'], 'text/xml')) {
-            $this->setError('Request not of type text/xml');
+        if (!strstr($headers['content-type'], $this->contentType)) {
+            $this->setError('Request not of type '.$this->contentType.': ' . $headers['content-type']);
             return false;
         }
         if (strpos($headers['content-type'], '=')) {
@@ -4566,7 +4574,7 @@ class nusoap_server extends nusoap_base
         }
         if (false == $namespace) {
         }
-        if (false === $soapaction) {
+        if (false == $soapaction) {
             if (isset($_SERVER)) {
                 $SERVER_NAME = $_SERVER['SERVER_NAME'];
                 $SCRIPT_NAME = isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
@@ -7832,11 +7840,11 @@ class nusoap_client extends nusoap_base
         $this->debug('Entering parseResponse() for data of length ' . strlen($data) . ' headers:');
         $this->appendDebug($this->varDump($headers));
         if (!isset($headers['content-type'])) {
-            $this->setError('Response not of type text/xml (no content-type header)');
+            $this->setError('Response not of type '.$this->contentType.' (no content-type header)');
             return false;
         }
-        if (!strstr($headers['content-type'], 'text/xml')) {
-            $this->setError('Response not of type text/xml: ' . $headers['content-type']);
+        if (!strstr($headers['content-type'], $this->contentType)) {
+            $this->setError('Response not of type '.$this->contentType.': ' . $headers['content-type']);
             return false;
         }
         if (strpos($headers['content-type'], '=')) {
@@ -8185,7 +8193,17 @@ class nusoap_client extends nusoap_base
      */
     function getHTTPContentType()
     {
-        return 'text/xml';
+        return $this->contentType;
+    }
+
+    /**
+     * allows you to change the HTTP ContentType of the request.
+     *
+     * @param   string $contentTypeNew
+     * @return  void
+     */
+    function setHTTPContentType($contentTypeNew = "text/xml"){
+        $this->contentType = $contentTypeNew;
     }
 
     /**
