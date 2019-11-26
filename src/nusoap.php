@@ -6785,16 +6785,25 @@ class nusoap_parser extends nusoap_base
             // Set the element handlers for the parser.
             xml_set_element_handler($this->parser, 'start_element', 'end_element');
             xml_set_character_data_handler($this->parser, 'character_data');
-
-            // Parse the XML file.
-            if (!xml_parse($this->parser, $xml, true)) {
-                // Display an error message.
-                $err = sprintf('XML error parsing SOAP payload on line %d: %s',
-                    xml_get_current_line_number($this->parser),
-                    xml_error_string(xml_get_error_code($this->parser)));
-                $this->debug($err);
-                $this->debug("XML payload:\n" . $xml);
-                $this->setError($err);
+            $parseErrors = array();
+            $chunkSize = 4096;
+            for($pointer = 0; $pointer < strlen($xml) && empty($parseErrors); $pointer += $chunkSize) {
+            	$xmlString = substr($xml, $pointer, $chunkSize);            	
+            	if(!xml_parse($this->parser, $xmlString, false)) {
+            		$parseErrors['lineNumber'] = xml_get_current_line_number($this->parser);
+            		$parseErrors['errorString'] = xml_error_string(xml_get_error_code($this->parser));
+            	};
+            }
+            //Tell the script that is the end of the parsing (by setting is_final to TRUE)
+            xml_parse($this->parser, '', true);
+            
+            if(!empty($parseErrors)){
+            	// Display an error message.
+            	$err = sprintf('XML error parsing SOAP payload on line %d: %s',
+            			$parseErrors['lineNumber'],
+            			$parseErrors['errorString']);
+            	$this->debug($err);
+            	$this->setError($err);
             } else {
                 $this->debug('in nusoap_parser ctor, message:');
                 $this->appendDebug($this->varDump($this->message));
