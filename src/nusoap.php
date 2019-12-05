@@ -2549,7 +2549,7 @@ class soap_transport_http extends nusoap_base
                 // recent versions of cURL turn on peer/host checking by default,
                 // while PHP binaries are not compiled with a default location for the
                 // CA cert bundle, so disable peer/host checking.
-                //$this->setCurlOption(CURLOPT_CAINFO, 'f:\php-4.3.2-win32\extensions\curl-ca-bundle.crt');		
+                //$this->setCurlOption(CURLOPT_CAINFO, 'f:\php-4.3.2-win32\extensions\curl-ca-bundle.crt');
                 $this->setCurlOption(CURLOPT_SSL_VERIFYPEER, 0);
                 $this->setCurlOption(CURLOPT_SSL_VERIFYHOST, 0);
 
@@ -4837,7 +4837,7 @@ class wsdl extends nusoap_base
                     $wsdlparts = parse_url($this->wsdl);    // this is bogusly simple!
                     foreach ($xs->imports as $ns2 => $list2) {
                         for ($ii = 0; $ii < count($list2); $ii++) {
-                            if (!$list2[$ii]['loaded']) {
+                            if (array_key_exists($ii, $list2) AND !$list2[$ii]['loaded']) {
                                 $this->schemas[$ns][$ns2]->imports[$ns2][$ii]['loaded'] = true;
                                 $url = $list2[$ii]['location'];
                                 if ($url != '') {
@@ -6788,7 +6788,7 @@ class nusoap_parser extends nusoap_base
             $parseErrors = array();
             $chunkSize = 4096;
             for($pointer = 0; $pointer < strlen($xml) && empty($parseErrors); $pointer += $chunkSize) {
-            	$xmlString = substr($xml, $pointer, $chunkSize);            	
+            	$xmlString = substr($xml, $pointer, $chunkSize);
             	if(!xml_parse($this->parser, $xmlString, false)) {
             		$parseErrors['lineNumber'] = xml_get_current_line_number($this->parser);
             		$parseErrors['errorString'] = xml_error_string(xml_get_error_code($this->parser));
@@ -6796,7 +6796,7 @@ class nusoap_parser extends nusoap_base
             }
             //Tell the script that is the end of the parsing (by setting is_final to TRUE)
             xml_parse($this->parser, '', true);
-            
+
             if(!empty($parseErrors)){
             	// Display an error message.
             	$err = sprintf('XML error parsing SOAP payload on line %d: %s',
@@ -7583,7 +7583,7 @@ class nusoap_client extends nusoap_base
             // no WSDL
             //$this->namespaces['ns1'] = $namespace;
             $nsPrefix = 'ns' . rand(1000, 9999);
-            // serialize 
+            // serialize
             $payload = '';
             if (is_string($params)) {
                 $this->debug("serializing param string for operation $operation");
