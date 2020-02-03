@@ -4837,7 +4837,7 @@ class wsdl extends nusoap_base
                     $wsdlparts = parse_url($this->wsdl);    // this is bogusly simple!
                     foreach ($xs->imports as $ns2 => $list2) {
                         for ($ii = 0; $ii < count($list2); $ii++) {
-                            if (array_key_exists($ii, $list2) AND !$list2[$ii]['loaded']) {
+                            if (array_key_exists($ii, $list2) && !isset($list2[$ii]['loaded'])) {
                                 $this->schemas[$ns][$ns2]->imports[$ns2][$ii]['loaded'] = true;
                                 $url = $list2[$ii]['location'];
                                 if ($url != '') {
