@@ -5694,7 +5694,7 @@ class wsdl extends nusoap_base
                         $ns = $this->getNamespaceFromPrefix($typePrefix);
                         $localPart = $this->getLocalPart($partType);
                         $typeDef = $this->getTypeDef($localPart, $ns);
-                        if ($typeDef['typeClass'] == 'element') {
+                        if (isset($typeDef['typeClass']) && $typeDef['typeClass'] == 'element') {
                             $elementortype = 'element';
                             if (substr($localPart, -1) == '^') {
                                 $localPart = substr($localPart, 0, -1);
