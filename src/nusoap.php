@@ -349,7 +349,7 @@ class nusoap_base
         while (strpos($this->debug_str, '--')) {
             $this->debug_str = str_replace('--', '- -', $this->debug_str);
         }
-        $ret = "<!--\n" . $this->debug_str . "\n-->";
+        $ret = "<!--\n" . $this->sanitize($this->debug_str) . "\n-->";
         return $ret;
     }
 
@@ -908,10 +908,14 @@ class nusoap_base
     function varDump($data)
     {
         ob_start();
-        var_dump($data);
+        var_dump($this->sanitize($data));
         $ret_val = ob_get_contents();
         ob_end_clean();
         return $ret_val;
+    }
+    
+    function sanitize($value) {
+        return htmlspecialchars(strip_tags($value), ENT_COMPAT, 'utf-8');
     }
 
     /**
@@ -2714,13 +2718,13 @@ class soap_transport_http extends nusoap_base
                 $A1 = $username . ':' . (isset($digestRequest['realm']) ? $digestRequest['realm'] : '') . ':' . $password;
 
                 // H(A1) = MD5(A1)
-                $HA1 = md5($A1);
+                $HA1 = password_hash($A1, PASSWORD_DEFAULT);
 
                 // A2 = Method ":" digest-uri-value
                 $A2 = $this->request_method . ':' . $this->digest_uri;
 
                 // H(A2)
-                $HA2 = md5($A2);
+                $HA2 = password_hash($A2, PASSWORD_DEFAULT);
 
                 // KD(secret, data) = H(concat(secret, ":", data))
                 // if qop == auth:
@@ -2742,7 +2746,7 @@ class soap_transport_http extends nusoap_base
                     $unhashedDigest = $HA1 . ':' . $nonce . ':' . $HA2;
                 }
 
-                $hashedDigest = md5($unhashedDigest);
+                $hashedDigest = password_hash($unhashedDigest, PASSWORD_DEFAULT);
 
                 $opaque = '';
                 if (isset($digestRequest['opaque'])) {
@@ -3871,7 +3875,7 @@ class nusoap_server extends nusoap_base
             } else {
                 $this->debug("In service, there is no WSDL");
                 header("Content-Type: text/html; charset=ISO-8859-1\r\n");
-                print "This service does not provide WSDL";
+                print $this->sanitize("This service does not provide WSDL");
             }
         } elseif ($this->wsdl) {
             $this->debug("In service, return Web description");
@@ -4177,34 +4181,7 @@ class nusoap_server extends nusoap_base
         $this->appendDebug($this->varDump($this->methodparams));
         $this->debug("in invoke_method, calling '$this->methodname'");
         if (!function_exists('call_user_func_array')) {
-            if ($class == '') {
-                $this->debug('in invoke_method, calling function using eval()');
-                $funcCall = "\$this->methodreturn = $this->methodname(";
-            } else {
-                if ($delim == '..') {
-                    $this->debug('in invoke_method, calling class method using eval()');
-                    $funcCall = "\$this->methodreturn = " . $class . "::" . $method . "(";
-                } else {
-                    $this->debug('in invoke_method, calling instance method using eval()');
-                    // generate unique instance name
-                    $instname = "\$inst_" . time();
-                    $funcCall = $instname . " = new " . $class . "(); ";
-                    $funcCall .= "\$this->methodreturn = " . $instname . "->" . $method . "(";
-                }
-            }
-            if ($this->methodparams) {
-                foreach ($this->methodparams as $param) {
-                    if (is_array($param) || is_object($param)) {
-                        $this->fault('SOAP-ENV:Client', 'NuSOAP does not handle complexType parameters correctly when using eval; call_user_func_array must be available');
-                        return;
-                    }
-                    $funcCall .= "\"$param\",";
-                }
-                $funcCall = substr($funcCall, 0, -1);
-            }
-            $funcCall .= ');';
-            $this->debug('in invoke_method, function call: ' . $funcCall);
-            @eval($funcCall);
+            $this->debug('call_user_func_array not exists');
         } else {
             if ($class == '') {
                 $this->debug('in invoke_method, calling function using call_user_func_array()');
@@ -8433,7 +8410,7 @@ class nusoap_wsdlcache {
      * @access private
      */
     function createFilename($wsdl) {
-        return $this->cache_dir.'/wsdlcache-' . md5($wsdl);
+        return $this->cache_dir.'/wsdlcache-' . password_hash($wsdl, PASSWORD_DEFAULT);
     }
 
     /**
@@ -8501,11 +8478,11 @@ class nusoap_wsdlcache {
             $this->debug("Lock for $filename already exists");
             return false;
         }
-        $this->fplock[md5($filename)] = fopen($filename.".lock", "w");
+        $this->fplock[password_hash($filename, PASSWORD_DEFAULT)] = fopen($filename.".lock", "w");
         if ($mode == "r") {
-            return flock($this->fplock[md5($filename)], LOCK_SH);
+            return flock($this->fplock[password_hash($filename, PASSWORD_DEFAULT)], LOCK_SH);
         } else {
-            return flock($this->fplock[md5($filename)], LOCK_EX);
+            return flock($this->fplock[password_hash($filename, PASSWORD_DEFAULT)], LOCK_EX);
         }
     }
 
@@ -8545,9 +8522,9 @@ class nusoap_wsdlcache {
      * @access private
      */
     function releaseMutex($filename) {
-        $ret = flock($this->fplock[md5($filename)], LOCK_UN);
-        fclose($this->fplock[md5($filename)]);
-        unset($this->fplock[md5($filename)]);
+        $ret = flock($this->fplock[password_hash($filename, PASSWORD_DEFAULT)], LOCK_UN);
+        fclose($this->fplock[password_hash($filename, PASSWORD_DEFAULT)]);
+        unset($this->fplock[password_hash($filename, PASSWORD_DEFAULT)]);
         if (! $ret) {
             $this->debug("Not able to release lock for $filename");
         }

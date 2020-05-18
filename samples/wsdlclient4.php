@@ -20,15 +20,17 @@ $proxyhost = isset($_POST['proxyhost']) ? $_POST['proxyhost'] : '';
 $proxyport = isset($_POST['proxyport']) ? $_POST['proxyport'] : '';
 $proxyusername = isset($_POST['proxyusername']) ? $_POST['proxyusername'] : '';
 $proxypassword = isset($_POST['proxypassword']) ? $_POST['proxypassword'] : '';
+$client = new soapclient('http://www.scottnichol.com/samples/round2_base_server.php?wsdl&debug=1', true,
+						$proxyhost, $proxyport, $proxyusername, $proxypassword);
 /*
  *	When no method has been specified, give the user a choice
  */
 if ($method == '') {
 	echo '<form name="MethodForm" method="POST">';
-	echo '<input type="hidden" name="proxyhost" value="' . $proxyhost .'">';
-	echo '<input type="hidden" name="proxyport" value="' . $proxyport .'">';
-	echo '<input type="hidden" name="proxyusername" value="' . $proxyusername .'">';
-	echo '<input type="hidden" name="proxypassword" value="' . $proxypassword .'">';
+	echo '<input type="hidden" name="proxyhost" value="' . $client->sanitize($proxyhost) .'">';
+	echo '<input type="hidden" name="proxyport" value="' . $client->sanitize($proxyport) .'">';
+	echo '<input type="hidden" name="proxyusername" value="' . $client->sanitize($proxyusername) .'">';
+	echo '<input type="hidden" name="proxypassword" value="' . $client->sanitize($proxypassword) .'">';
 	echo 'Method: <select name="method">';
 	echo '<option>echoString</option>';
 	echo '<option>echoStringArray</option>';
@@ -133,17 +135,15 @@ if ($method == 'echoString') {
 		$params = array('inputBase64' => null);
 	}
 } else {
-	echo 'Sorry, I do not know about method ' . $method;
+	echo $client->sanitize('Sorry, I do not know about method ' . $method);
 	exit();
 }
-$client = new soapclient('http://www.scottnichol.com/samples/round2_base_server.php?wsdl&debug=1', true,
-						$proxyhost, $proxyport, $proxyusername, $proxypassword);
 $err = $client->getError();
 if ($err) {
-	echo '<h2>Constructor error</h2><pre>' . $err . '</pre>';
+	echo '<h2>Constructor error</h2><pre>' . $client->sanitize($err) . '</pre>';
 }
 $client->useHTTPPersistentConnection();
-echo '<h2>Execute ' . $method . '</h2>';
+echo '<h2>Execute ' . $client->sanitize($method) . '</h2>';
 $result = $client->call($method, $params);
 // Check for a fault
 if ($client->fault) {
@@ -162,7 +162,7 @@ if ($client->fault) {
 		print_r((!is_bool($result)) ? $result : ($result ? 'true' : 'false'));
 		echo '</pre>';
 		// And execute again to test persistent connection
-		echo '<h2>Execute ' . $method . ' again to test persistent connection (see debug)</h2>';
+		echo '<h2>Execute ' . $client->sanitize($method) . ' again to test persistent connection (see debug)</h2>';
 		$client->debug("*** execute again to test persistent connection ***");
 		$result = $client->call($method, $params);
 		// And again...
