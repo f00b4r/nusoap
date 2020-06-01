@@ -18,8 +18,8 @@ $proxypassword = isset($_POST['proxypassword']) ? $_POST['proxypassword'] : '';
 $useCURL = isset($_POST['usecurl']) ? $_POST['usecurl'] : '0';
 
 //echo 'You must set your own Via Michelin login and password in the source code to run this client!'; exit();
-$login = 'WSDEMO_01145';
-$password = 'DckHXMMHj';
+$_cred0 = 'WSDEMO_01145';
+$_cred1 = 'DckHXMMHj';
 
 $wsdlurl = 'http://www.viamichelin.com/ws/services/Geocoding?wsdl';
 $cache = new wsdlcache('.', 120);
@@ -56,7 +56,7 @@ $inputAddresses[] = array(
 	'stateName' => 'PA'
 );
 $geocodingrequest = array('addressesList' => $inputAddresses);
-$params = array('request' => $geocodingrequest, 'check' => "$login|$password");
+$params = array('request' => $geocodingrequest, 'check' => "$_cred0|$_cred1");
 $result = $client->call('getLocationsList', $params);
 
 // Check for a fault
