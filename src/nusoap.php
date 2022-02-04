@@ -2846,7 +2846,8 @@ class soap_transport_http extends nusoap_base
             'HTTP/1.1 302',
             'HTTP/1.0 401',
             'HTTP/1.1 401',
-            'HTTP/1.0 200 Connection established');
+            'HTTP/1.0 200 Connection established',
+            'HTTP/1.1 200 Connection established');
         foreach ($skipHeaders as $hd) {
             $prefix = substr($data, 0, strlen($hd));
             if ($prefix == $hd) {
