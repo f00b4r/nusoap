@@ -2692,7 +2692,7 @@ class soap_transport_http extends nusoap_base
      *
      * @param    string $username
      * @param    string $password
-     * @param    string $authtype (basic|digest|certificate|ntlm)
+     * @param    string $authtype (basic|bearer|digest|certificate|ntlm)
      * @param    array $digestRequest (keys must be nonce, nc, realm, qop)
      * @param    array $certRequest (keys must be cainfofile (optional), sslcertfile, sslkeyfile, passphrase, certpassword (optional), verifypeer (optional), verifyhost (optional): see corresponding options in cURL docs)
      * @access   public
@@ -2706,6 +2706,8 @@ class soap_transport_http extends nusoap_base
         // cf. RFC 2617
         if ($authtype == 'basic') {
             $this->setHeader('Authorization', 'Basic ' . base64_encode(str_replace(':', '', $username) . ':' . $password));
+        } elseif ($authtype == 'bearer') {
+            $this->setHeader('Authorization', 'Bearer ' . (isset($password) ? $password : $username));
         } elseif ($authtype == 'digest') {
             if (isset($digestRequest['nonce'])) {
                 $digestRequest['nc'] = isset($digestRequest['nc']) ? $digestRequest['nc']++ : 1;
@@ -3001,7 +3003,7 @@ class soap_transport_http extends nusoap_base
             //$this->setCurlOption(CURLOPT_CUSTOMREQUEST, $this->outgoing_payload);
             $curl_headers = array();
             foreach ($this->outgoing_headers as $k => $v) {
-                if ($k == 'Connection' || $k == 'Content-Length' || $k == 'Host' || $k == 'Authorization' || $k == 'Proxy-Authorization') {
+                if ($k == 'Connection' || $k == 'Content-Length' || $k == 'Host' || /*$k == 'Authorization' ||*/ $k == 'Proxy-Authorization') {
                     $this->debug("Skip cURL header $k: $v");
                 } else {
                     $curl_headers[] = "$k: $v";
