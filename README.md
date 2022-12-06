@@ -24,10 +24,13 @@ NuSOAP is a rewrite of SOAPx4, provided by NuSphere and Dietrich Ayala. It is a 
 
 ## Info
 
-- Supported PHP: [5.4 - 8.1](https://travis-ci.org/pwnlabs/nusoap)
-- Latest version: [0.9.11](https://github.com/pwnlabs/nusoap/releases/tag/v0.9.11)
-- Dev version: [develop](https://github.com/pwnlabs/nusoap/tree/develop)
+- [Supported PHP: 7.3 - 8.1](https://travis-ci.org/pwnlabs/nusoap)
+- [Latest release: 0.9.11](https://github.com/pwnlabs/nusoap/releases/tag/v0.9.11)
+- [Dev version: develop](https://github.com/pwnlabs/nusoap/tree/develop)
 - Official project: https://sourceforge.net/projects/nusoap/
+- [smevx-crypto for Java 8](https://github.com/proxy-m/smevx-crypto)
+- [openssl error: Algorithm gost2012_256 not found](https://forum.rutoken.ru/topic/3173/)
+- [openssl gost2012_256, hmac-gost-3411-12-256](https://docs.altlinux.org/ru-RU/alt-workstation/10.1/html-single/alt-workstation/index.html#idm45860460701600)
 
 ## Installation
 

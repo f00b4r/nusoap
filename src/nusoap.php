@@ -2546,8 +2546,14 @@ class soap_transport_http extends nusoap_base
                 $this->setCurlOption(CURLOPT_TIMEOUT, $response_timeout);
             }
 
-            if ($this->scheme == 'https') {
+	    if ($this->scheme == 'https') {
+                $this->setCurlOption(CURLOPT_SSLENGINE, 'gost');
+                $this->setCurlOption(CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_1); // TLSv1.1 and more (TLSv1.1, TLSv1.2, TLSv1.3)
+                ///$this->setCurlOption(CURLOPT_SSL_CIPHER_LIST, 'TLSv1,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES128-SHA');    
+                ///$this->setCurlOption(CURLOPT_TLS13_CIPHERS, 'GOST2012-GOST8912-GOST8912:GOST2001-GOST89-GOST89:DES-CBC3-SHA:IDEA-CBC-MD5:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-DSS-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDH-RSA-AES256-GCM-SHA384:ECDH-ECDSA-AES256-GCM-SHA384:AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:ECDH-RSA-AES128-GCM-SHA256:ECDH-ECDSA-AES128-GCM-SHA256:AES128-GCM-SHA256:TLS_AES_256_GCM_SHA384'); /////
                 $this->debug('set cURL SSL verify options');
+                ///$this->setCurlOption(CURLOPT_SSLCERTTYPE, 'CERT_SHA1_HASH_PROP_ID:CERT_SYSTEM_STORE_CURRENT_USER:MY');
+                ///$this->setCurlOption(CURLOPT_SSLCERT, '53be6850031bf03bff056fd5215a46c07b2248d6');
                 // recent versions of cURL turn on peer/host checking by default,
                 // while PHP binaries are not compiled with a default location for the
                 // CA cert bundle, so disable peer/host checking.
@@ -2692,7 +2698,7 @@ class soap_transport_http extends nusoap_base
      *
      * @param    string $username
      * @param    string $password
-     * @param    string $authtype (basic|digest|certificate|ntlm)
+     * @param    string $authtype (basic|bearer|digest|certificate|ntlm)
      * @param    array $digestRequest (keys must be nonce, nc, realm, qop)
      * @param    array $certRequest (keys must be cainfofile (optional), sslcertfile, sslkeyfile, passphrase, certpassword (optional), verifypeer (optional), verifyhost (optional): see corresponding options in cURL docs)
      * @access   public
@@ -2706,6 +2712,8 @@ class soap_transport_http extends nusoap_base
         // cf. RFC 2617
         if ($authtype == 'basic') {
             $this->setHeader('Authorization', 'Basic ' . base64_encode(str_replace(':', '', $username) . ':' . $password));
+        } elseif ($authtype == 'bearer') {
+            $this->setHeader('Authorization', 'Bearer ' . (isset($password) ? $password : $username));
         } elseif ($authtype == 'digest') {
             if (isset($digestRequest['nonce'])) {
                 $digestRequest['nc'] = isset($digestRequest['nc']) ? $digestRequest['nc']++ : 1;
@@ -3001,7 +3009,7 @@ class soap_transport_http extends nusoap_base
             //$this->setCurlOption(CURLOPT_CUSTOMREQUEST, $this->outgoing_payload);
             $curl_headers = array();
             foreach ($this->outgoing_headers as $k => $v) {
-                if ($k == 'Connection' || $k == 'Content-Length' || $k == 'Host' || $k == 'Authorization' || $k == 'Proxy-Authorization') {
+		    if ($k == 'Connection' || $k == 'Content-Length' || $k == 'Host' || /*$k == 'Authorization' ||*/ $k == 'Proxy-Authorization') {
                     $this->debug("Skip cURL header $k: $v");
                 } else {
                     $curl_headers[] = "$k: $v";
