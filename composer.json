@@ -1,7 +1,7 @@
 {
   "name": "econea/nusoap",
   "type": "library",
-  "description": "Fixed NuSOAP for PHP 5.4 - 8.1",
+  "description": "Fixed NuSOAP for PHP 5.4 - 8.2",
   "keywords": ["soap","nusoap","php","http","xml","transport","client"],
   "license": "LGPL-2.0-only",
   "homepage": "https://github.com/pwnlabs/nusoap",

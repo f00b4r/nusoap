@@ -2229,6 +2229,8 @@ class soapval extends nusoap_base
 class soap_transport_http extends nusoap_base
 {
 
+    var $query = '';
+    var $tryagain = false;
     var $url = '';
     var $uri = '';
     var $digest_uri = '';
@@ -6729,6 +6731,8 @@ class wsdl extends nusoap_base
 class nusoap_parser extends nusoap_base
 {
 
+    var $parser = null;
+    var $methodNamespace = '';
     var $xml = '';
     var $xml_encoding = '';
     var $method = '';
@@ -7474,6 +7478,10 @@ class soap_parser extends nusoap_parser
 class nusoap_client extends nusoap_base
 {
 
+    var $attachments = '';
+    var $return = null;
+    var $operation = '';
+    var $opData = array();
     var $username = '';                // Username for HTTP authentication
     var $password = '';                // Password for HTTP authentication
     var $authtype = '';                // Type of HTTP authentication
