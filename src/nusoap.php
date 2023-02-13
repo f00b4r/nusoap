@@ -1427,7 +1427,7 @@ class nusoap_xmlschema extends nusoap_base
                 $this->xdebug("do nothing for element $name");
                 break;
             case 'complexType':
-                array_push($this->complexTypeStack, $this->currentComplexType);
+                $this->complexTypeStack[] = $this->currentComplexType;
                 if (isset($attrs['name'])) {
                     // TODO: what is the scope of named complexTypes that appear
                     //       nested within other c complexTypes?
@@ -1473,7 +1473,7 @@ class nusoap_xmlschema extends nusoap_base
                 $this->complexTypes[$this->currentComplexType]['simpleContent'] = 'false';
                 break;
             case 'element':
-                array_push($this->elementStack, $this->currentElement);
+                $this->elementStack[] = $this->currentElement;
                 if (!isset($attrs['form'])) {
                     if ($this->currentComplexType) {
                         $attrs['form'] = $this->schemaInfo['elementFormDefault'];
@@ -1599,7 +1599,7 @@ class nusoap_xmlschema extends nusoap_base
                 }
                 break;
             case 'simpleType':
-                array_push($this->simpleTypeStack, $this->currentSimpleType);
+                $this->simpleTypeStack[] = $this->currentSimpleType;
                 if (isset($attrs['name'])) {
                     $this->xdebug("processing simpleType for name " . $attrs['name']);
                     $this->currentSimpleType = $attrs['name'];
@@ -6836,7 +6836,7 @@ class nusoap_parser extends nusoap_base
             $this->attachments = array();
             foreach(preg_split("/((\r?\n)|(\r\n?))/", $xml) as $line){
                 if(preg_match(("/^--(.*)/"), $line, $matches)) {
-                    array_push($this->attachments, array());
+                    $this->attachments[] = array ();
                     $this->attachments[count($this->attachments)-1]['boundaryStr'] = $matches[1];
                 } elseif(preg_match(("/Content-Type:(.*)/"), $line, $matches)) {
                     $this->attachments[count($this->attachments)-1]['Content-Type'] = $matches[1];
