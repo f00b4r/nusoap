@@ -1101,19 +1101,18 @@ class nusoap_fault extends nusoap_base
         foreach ($this->namespaces as $k => $v) {
             $ns_string .= "\n  xmlns:$k=\"$v\"";
         }
-        $return_msg =
-            '<?xml version="1.0" encoding="' . $this->soap_defencoding . '"?>' .
-            '<SOAP-ENV:Envelope SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"' . $ns_string . ">\n" .
-            '<SOAP-ENV:Body>' .
-            '<SOAP-ENV:Fault>' .
-            $this->serialize_val($this->faultcode, 'faultcode') .
-            $this->serialize_val($this->faultstring, 'faultstring') .
-            $this->serialize_val($this->faultactor, 'faultactor') .
-            $this->serialize_val($this->faultdetail, 'detail') .
-            '</SOAP-ENV:Fault>' .
-            '</SOAP-ENV:Body>' .
-            '</SOAP-ENV:Envelope>';
-        return $return_msg;
+  
+      return '<?xml version="1.0" encoding="' . $this->soap_defencoding . '"?>' .
+       '<SOAP-ENV:Envelope SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"' . $ns_string . ">\n" .
+       '<SOAP-ENV:Body>' .
+       '<SOAP-ENV:Fault>' .
+       $this->serialize_val($this->faultcode, 'faultcode') .
+       $this->serialize_val($this->faultstring, 'faultstring') .
+       $this->serialize_val($this->faultactor, 'faultactor') .
+       $this->serialize_val($this->faultdetail, 'detail') .
+       '</SOAP-ENV:Fault>' .
+       '</SOAP-ENV:Body>' .
+       '</SOAP-ENV:Envelope>';
     }
 }
 
@@ -1790,8 +1789,8 @@ class nusoap_xmlschema extends nusoap_base
         foreach (array_diff($this->usedNamespaces, $this->enclosingNamespaces) as $nsp => $ns) {
             $el .= " xmlns:$nsp=\"$ns\"";
         }
-        $xml = $el . ">\n" . $xml . "</$schemaPrefix:schema>\n";
-        return $xml;
+  
+      return $el . ">\n" . $xml . "</$schemaPrefix:schema>\n";
     }
 
     /**
@@ -3493,14 +3492,14 @@ class soap_transport_http extends nusoap_base
         if ($sep_pos) {
             $name = substr($value_str, 0, $sep_pos);
             $value = substr($value_str, $sep_pos + 1);
-            $cookie = array('name' => $name,
-                'value' => $value,
-                'domain' => $domain,
-                'path' => $path,
-                'expires' => $expires,
-                'secure' => $secure
-            );
-            return $cookie;
+  
+          return array('name' => $name,
+                     'value' => $value,
+                     'domain' => $domain,
+                     'path' => $path,
+                     'expires' => $expires,
+                     'secure' => $secure
+          );
         }
         return false;
     }
@@ -5409,8 +5408,7 @@ class wsdl extends nusoap_base
                 foreach (array_keys($this->bindings[$portData['binding']]['operations']) as $bOperation) {
                     // note that we could/should also check the namespace here
                     if ($operation == $bOperation) {
-                        $opData = $this->bindings[$portData['binding']]['operations'][$operation];
-                        return $opData;
+                      return $this->bindings[$portData['binding']]['operations'][$operation];
                     }
                 }
             }
@@ -8238,8 +8236,8 @@ class nusoap_client extends nusoap_base
         if ($this->endpointType != 'wsdl') {
             $evalStr = 'A proxy can only be created for a WSDL client';
             $this->setError($evalStr);
-            $evalStr = "echo \"$evalStr\";";
-            return $evalStr;
+  
+          return "echo \"$evalStr\";";
         }
         if ($this->endpointType == 'wsdl' && is_null($this->wsdl)) {
             $this->loadWSDL();
@@ -8279,10 +8277,10 @@ class nusoap_client extends nusoap_base
                 unset($paramCommentStr);
             }
         }
-        $evalStr = 'class nusoap_proxy_' . $r . ' extends nusoap_client {
-	' . $evalStr . '
+  
+      return 'class nusoap_proxy_' . $r . ' extends nusoap_client {
+' . $evalStr . '
 }';
-        return $evalStr;
     }
 
     /**
