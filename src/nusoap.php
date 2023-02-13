@@ -325,7 +325,7 @@ class nusoap_base
     /**
      * gets the current debug data for this instance
      *
-     * @return   debug data
+     * @return   string data
      * @access   public
      */
     function &getDebug()
@@ -339,7 +339,7 @@ class nusoap_base
      * gets the current debug data for this instance as an XML comment
      * this may change the contents of the debug data
      *
-     * @return   debug data as an XML comment
+     * @return   string data as an XML comment
      * @access   public
      */
     function &getDebugAsXMLComment()
@@ -374,7 +374,7 @@ class nusoap_base
     /**
      * returns error string if present
      *
-     * @return   mixed error string or false
+     * @return   false|string error string or false
      * @access   public
      */
     function getError()
@@ -388,7 +388,7 @@ class nusoap_base
     /**
      * sets error string
      *
-     * @return   boolean $string error string
+     * @return   void
      * @access   private
      */
     function setError($str)
@@ -832,7 +832,7 @@ class nusoap_base
      * returns false, if not prefixed
      *
      * @param string $str The prefixed string
-     * @return mixed The prefix or false if there is no prefix
+     * @return false|string The prefix or false if there is no prefix
      * @access public
      */
     function getPrefix($str)
@@ -865,7 +865,7 @@ class nusoap_base
      * or false if no prefixes registered for the given namespace
      *
      * @param string $ns The namespace
-     * @return mixed The prefix, false if the namespace has no prefixes
+     * @return false|string The prefix, false if the namespace has no prefixes
      * @access public
      */
     function getPrefixFromNamespace($ns)
@@ -937,7 +937,7 @@ class nusoap_base
  *
  * @param    int $timestamp Unix time stamp
  * @param    boolean $utc Whether the time stamp is UTC or local
- * @return    mixed ISO 8601 date string or false
+ * @return   false|string ISO 8601 date string or false
  * @access   public
  */
 function timestamp_to_iso8601($timestamp, $utc = true)
@@ -977,7 +977,7 @@ function timestamp_to_iso8601($timestamp, $utc = true)
  * convert ISO 8601 compliant date string to unix timestamp
  *
  * @param    string $datestr ISO 8601 compliant date string
- * @return    mixed Unix timestamp (int) or false
+ * @return   false|int Unix timestamp (int) or false
  * @access   public
  */
 function iso8601_to_timestamp($datestr)
@@ -1281,7 +1281,7 @@ class nusoap_xmlschema extends nusoap_base
     /**
      * gets a type name for an unnamed type
      *
-     * @param    string    Element name
+     * @param    string $ename Element name
      * @return    string    A type name for an unnamed type
      * @access    private
      */
@@ -1927,7 +1927,7 @@ class nusoap_xmlschema extends nusoap_base
      * returns a sample serialization of a given type, or false if no type by the given name
      *
      * @param string $type name of type
-     * @return mixed
+     * @return false|string
      * @access public
      * @deprecated
      */
@@ -2004,9 +2004,7 @@ class nusoap_xmlschema extends nusoap_base
 
     /**
      * adds a complex type to the schema
-     *
      * example: array
-     *
      * addType(
      *    'ArrayOfstring',
      *    'complexType',
@@ -2016,9 +2014,7 @@ class nusoap_xmlschema extends nusoap_base
      *    array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'string[]'),
      *    'xsd:string'
      * );
-     *
      * example: PHP associative array ( SOAP Struct )
-     *
      * addType(
      *    'SOAPStruct',
      *    'complexType',
@@ -2027,19 +2023,20 @@ class nusoap_xmlschema extends nusoap_base
      *    array('myVar'=> array('name'=>'myVar','type'=>'string')
      * );
      *
-     * @param name
-     * @param typeClass (complexType|simpleType|attribute)
-     * @param phpType : currently supported are array and struct (php assoc array)
-     * @param compositor (all|sequence|choice)
-     * @param restrictionBase namespace:name (http://schemas.xmlsoap.org/soap/encoding/:Array)
-     * @param elements = array ( name = array(name=>'',type=>'') )
-     * @param attrs = array(
+     * @param string $name
+     * @param string $typeClass (complexType|simpleType|attribute)
+     * @param string $phpType : currently supported are array and struct (php assoc array)
+     * @param string $compositor (all|sequence|choice)
+     * @param string $restrictionBase namespace:name (http://schemas.xmlsoap.org/soap/encoding/:Array)
+     * @param array $elements = array ( name = array(name=>'',type=>'') )
+     * @param array $attrs = array(
      *    array(
      *        'ref' => "http://schemas.xmlsoap.org/soap/encoding/:arrayType",
      *        "http://schemas.xmlsoap.org/wsdl/:arrayType" => "string[]"
      *    )
      * )
-     * @param arrayType : namespace:name (http://www.w3.org/2001/XMLSchema:string)
+     * @param array $arrayType : namespace:name (http://www.w3.org/2001/XMLSchema:string)
+     *
      * @access public
      * @see getTypeDef
      */
@@ -2394,7 +2391,7 @@ class soap_transport_http extends nusoap_base
     /**
      * establish an HTTP connection
      *
-     * @param    integer $timeout set connection timeout in seconds
+     * @param    integer $connection_timeout set connection timeout in seconds
      * @param    integer $response_timeout set response timeout in seconds
      * @return    boolean true if connected, false if not
      * @access   private
@@ -4457,7 +4454,7 @@ class nusoap_server extends nusoap_base
      *
      * @param    array $headers The HTTP headers
      * @param    string $data unprocessed request data from client
-     * @return    mixed    value of the message, decoded into a PHP type
+     * @return   false|void void or false on error
      * @access   private
      */
     function parseRequest($headers, $data)
@@ -5452,7 +5449,6 @@ class wsdl extends nusoap_base
     /**
      * returns an array of information about a given type
      * returns false if no type exists by the given name
-     *
      *     typeDef = array(
      *     'elements' => array(), // refs to elements array
      *    'restrictionBase' => '',
@@ -5463,7 +5459,7 @@ class wsdl extends nusoap_base
      *
      * @param string $type the type
      * @param string $ns namespace (not prefix) of the type
-     * @return mixed
+     * @return false
      * @access public
      * @see nusoap_xmlschema
      */
@@ -5883,7 +5879,7 @@ class wsdl extends nusoap_base
      * @param string $direction (input|output)
      * @param mixed $parameters parameter value(s)
      * @param string $bindingType (soap|soap12)
-     * @return mixed parameters serialized as XML or false on error (e.g. operation not found)
+     * @return false|string parameters serialized as XML or false on error (e.g. operation not found)
      * @access public
      */
     function serializeRPCParameters($operation, $direction, $parameters, $bindingType = 'soap')
@@ -5984,7 +5980,7 @@ class wsdl extends nusoap_base
      * @param string $operation operation name
      * @param string $direction (input|output)
      * @param mixed $parameters parameter value(s)
-     * @return mixed parameters serialized as XML or false on error (e.g. operation not found)
+     * @return false|string parameters serialized as XML or false on error (e.g. operation not found)
      * @access public
      * @deprecated
      */
@@ -8627,7 +8623,7 @@ class nusoap_wsdlcache {
     /**
      * adds a wsdl instance to the cache
      *
-     * @param object wsdl $wsdl_instance The wsdl instance to add
+     * @param wsdl $wsdl_instance The wsdl instance to add
      * @return boolean WSDL successfully cached
      * @access public
      */
