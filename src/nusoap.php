@@ -1906,7 +1906,6 @@ class nusoap_xmlschema extends nusoap_base
      * @param string $type name of type
      * @return false|string
      * @access public
-     * @deprecated
      */
     function serializeTypeDef($type)
     {
@@ -2654,7 +2653,6 @@ class soap_transport_http extends nusoap_base
      * @param    array $cookies cookies to send
      * @return    string data
      * @access   public
-     * @deprecated
      */
     function sendHTTPS($data, $timeout = 0, $response_timeout = 30, $cookies = NULL)
     {
