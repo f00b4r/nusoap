@@ -6827,7 +6827,7 @@ class nusoap_parser extends nusoap_base
             	if(!xml_parse($this->parser, $xmlString, false)) {
             		$parseErrors['lineNumber'] = xml_get_current_line_number($this->parser);
             		$parseErrors['errorString'] = xml_error_string(xml_get_error_code($this->parser));
-            	};
+            	}
             }
             //Tell the script that is the end of the parsing (by setting is_final to TRUE)
             xml_parse($this->parser, '', true);
