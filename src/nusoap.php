@@ -7485,22 +7485,22 @@ class nusoap_client extends nusoap_base
 	 * fault related variables
 	 */
     /**
-     * @var      fault
+     * @var      bool
      * @access   public
      */
     var $fault;
     /**
-     * @var      faultcode
+     * @var      string
      * @access   public
      */
     var $faultcode;
     /**
-     * @var      faultstring
+     * @var      string
      * @access   public
      */
     var $faultstring;
     /**
-     * @var      faultdetail
+     * @var      string
      * @access   public
      */
     var $faultdetail;
