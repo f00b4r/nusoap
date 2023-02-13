@@ -2234,6 +2234,7 @@ class soap_transport_http extends nusoap_base
     
     /** @var false|resource */
     var $fp;
+    var $errno;
 
     /**
      * constructor
@@ -4770,6 +4771,7 @@ class wsdl extends nusoap_base
     var $opStatus;
     /** @var mixed */
     var $serviceName;
+    var $wsdl_info;
 
     /**
      * constructor
