@@ -5405,11 +5405,10 @@ class wsdl extends nusoap_base
             if ($portData['bindingType'] == $bindingType) {
                 // get binding
                 //foreach($this->bindings[ $portData['binding'] ]['operations'] as $bOperation => $opData) {
-                foreach (array_keys($this->bindings[$portData['binding']]['operations']) as $bOperation) {
-                    // note that we could/should also check the namespace here
-                    if ($operation == $bOperation) {
-                      return $this->bindings[$portData['binding']]['operations'][$operation];
-                    }
+                // note that we could/should also check the namespace here
+                if (in_array ($operation, array_keys ($this->bindings[$portData['binding']]['operations'])))
+                {
+                    return $this->bindings[$portData['binding']]['operations'][$operation];
                 }
             }
         }
