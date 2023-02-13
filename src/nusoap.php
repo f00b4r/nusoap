@@ -2837,8 +2837,6 @@ class soap_transport_http extends nusoap_base
      */
     function decodeChunked($buffer, $lb)
     {
-        // length := 0
-        $length = 0;
         $new = '';
 
         // read chunk-size, chunk-extension (if any) and CRLF
