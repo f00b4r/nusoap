@@ -1986,11 +1986,9 @@ class nusoap_xmlschema extends nusoap_base
                 // if array
             } elseif ($typeDef['phpType'] == 'array') {
                 $buffer .= '<table>';
-                for ($i = 0; $i < 3; $i++) {
-                    $buffer .= "
+              $buffer .= str_repeat ("
 					<tr><td align='right'>array item (type: $typeDef[arrayType]):</td>
-					<td><input type='text' name='parameters[" . $name . "][]'></td></tr>";
-                }
+					<td><input type='text' name='parameters[" . $name . "][]'></td></tr>", 3);
                 $buffer .= '</table>';
                 // if scalar
             } else {
