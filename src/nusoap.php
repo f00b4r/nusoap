@@ -4972,7 +4972,7 @@ class wsdl extends nusoap_base
             if ($this->authtype != '') {
                 $tr->setCredentials($this->username, $this->password, $this->authtype, array(), $this->certRequest);
             }
-            $tr->setEncoding('gzip, deflate');
+            $tr->setEncoding();
             $wsdl_string = $tr->send('', $this->timeout, $this->response_timeout);
             //$this->debug("WSDL request\n" . $tr->outgoing_payload);
             //$this->debug("WSDL response\n" . $tr->incoming_payload);
@@ -6824,7 +6824,7 @@ class nusoap_parser extends nusoap_base
             $chunkSize = 4096;
             for($pointer = 0; $pointer < strlen($xml) && empty($parseErrors); $pointer += $chunkSize) {
             	$xmlString = substr($xml, $pointer, $chunkSize);
-            	if(!xml_parse($this->parser, $xmlString, false)) {
+            	if(!xml_parse($this->parser, $xmlString)) {
             		$parseErrors['lineNumber'] = xml_get_current_line_number($this->parser);
             		$parseErrors['errorString'] = xml_error_string(xml_get_error_code($this->parser));
             	}
@@ -7807,7 +7807,7 @@ class nusoap_client extends nusoap_base
             $this->wsdl->clearDebug();
             $this->debug('got wsdl error: ' . $errstr);
             $this->setError('wsdl error: ' . $errstr);
-        } elseif ($this->operations = $this->wsdl->getOperations($this->portName, 'soap')) {
+        } elseif ($this->operations = $this->wsdl->getOperations($this->portName)) {
             $this->appendDebug($this->wsdl->getDebug());
             $this->wsdl->clearDebug();
             $this->bindingType = 'soap';
