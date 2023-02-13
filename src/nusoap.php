@@ -1291,7 +1291,7 @@ class nusoap_xmlschema extends nusoap_base
      *
      * @param    string $parser XML parser object
      * @param    string $name element name
-     * @param    string $attrs associative array of attributes
+     * @param    array $attrs associative array of attributes
      * @access   private
      */
     function schemaStartElement($parser, $name, $attrs)
