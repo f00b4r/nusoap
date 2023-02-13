@@ -2732,7 +2732,7 @@ class soap_transport_http extends nusoap_base
                 // request-digest  = <"> < KD ( H(A1), unq(nonce-value) ":" H(A2) ) > <">
 
                 $unhashedDigest = '';
-                $nonce = isset($digestRequest['nonce']) ? $digestRequest['nonce'] : '';
+                $nonce = $digestRequest['nonce'];
                 $cnonce = $nonce;
                 if ($digestRequest['qop'] != '') {
                     $unhashedDigest = $HA1 . ':' . $nonce . ':' . sprintf("%08d", $digestRequest['nc']) . ':' . $cnonce . ':' . $digestRequest['qop'] . ':' . $HA2;
