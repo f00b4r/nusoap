@@ -8194,6 +8194,7 @@ class nusoap_client extends nusoap_base
         // eval the class
         eval($evalStr);
         // instantiate proxy object
+        /** @var nusoap_client $proxy */
         eval("\$proxy = new nusoap_proxy_$r('');");
         // transfer current wsdl data to the proxy thereby avoiding parsing the wsdl twice
         $proxy->endpointType = 'wsdl';
