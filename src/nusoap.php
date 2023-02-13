@@ -552,6 +552,7 @@ class nusoap_base
                 break;
             case is_object($val):
                 $this->debug("serialize_val: serialize object");
+                $pXml = "";
                 if (get_class($val) == 'soapval') {
                     $this->debug("serialize_val: serialize soapval object");
                     $pXml = $val->serialize($use);
@@ -586,6 +587,9 @@ class nusoap_base
                     $this->debug("serialize_val: serialize array");
                     $i = 0;
                     if (is_array($val) && count($val) > 0) {
+                        $array_types = array ();
+                        $tt_ns = "";
+                        $tt = "";
                         foreach ($val as $v) {
                             if (is_object($v) && get_class($v) == 'soapval') {
                                 $tt_ns = $v->type_ns;
@@ -1339,6 +1343,7 @@ class nusoap_xmlschema extends nusoap_base
                     }
                 }
             }
+            $eAttrs = array ();
             foreach ($attrs as $k => $v) {
                 // expand each attribute
                 $k = strpos($k, ':') ? $this->expandQname($k) : $k;
@@ -1391,6 +1396,8 @@ class nusoap_xmlschema extends nusoap_base
                 } elseif (isset($attrs['ref'])) {
                     $aname = $attrs['ref'];
                     $this->attributes[$attrs['ref']] = $attrs;
+                } else {
+                    $aname = '';
                 }
 
                 if ($this->currentComplexType) {    // This should *always* be
@@ -2612,9 +2619,9 @@ class soap_transport_http extends nusoap_base
      */
     function send($data, $timeout = 0, $response_timeout = 30, $cookies = null)
     {
-
         $this->debug('entered send() with data of length: ' . strlen($data));
-
+    
+        $respdata = "";
         $this->tryagain = true;
         $tries = 0;
         while ($this->tryagain) {
@@ -3000,12 +3007,13 @@ class soap_transport_http extends nusoap_base
     function getResponse()
     {
         $this->incoming_payload = '';
+        $header_array = array ();
+        $data = '';
 
         if ($this->io_method() == 'socket') {
             // loop until headers have been retrieved
-            $data = '';
+            $pos = 0;
             while (!isset($lb)) {
-
                 // We might EOF during header read.
                 if (feof($this->fp)) {
                     $this->incoming_payload = $data;
@@ -3304,6 +3312,7 @@ class soap_transport_http extends nusoap_base
         // decode content-encoding
         if (isset($this->incoming_headers['content-encoding']) && $this->incoming_headers['content-encoding'] != '') {
             if (strtolower($this->incoming_headers['content-encoding']) == 'deflate' || strtolower($this->incoming_headers['content-encoding']) == 'gzip') {
+                $header_data = "";
                 // if decoding works, use it. else assume data wasn't gzencoded
                 if (function_exists('gzinflate')) {
                     //$timer->setMarker('starting decoding of gzip/deflated content');
@@ -3347,7 +3356,7 @@ class soap_transport_http extends nusoap_base
                     //$timer->setMarker('finished decoding of gzip/deflated content');
                     //print "<xmp>\nde-inflated:\n---------------\n$data\n-------------\n</xmp>";
                     // set decoded payload
-                    $this->incoming_payload = $header_data . $lb . $lb . $data;
+                    $this->incoming_payload = $header_data . (isset ($lb) ? $lb : "") . (isset ($lb) ? $lb : "") . $data;
                 } else {
                     $this->debug('The server sent compressed data. Your php install must have the Zlib extension compiled in to support this.');
                     $this->setError('The server sent compressed data. Your php install must have the Zlib extension compiled in to support this.');
@@ -4096,6 +4105,7 @@ class nusoap_server extends nusoap_base
 
         $class = '';
         $method = '';
+        $try_class = '';
         if (strlen($delim) > 0 && substr_count($this->methodname, $delim) == 1) {
             $try_class = substr($this->methodname, 0, strpos($this->methodname, $delim));
             if (class_exists($try_class)) {
@@ -4111,7 +4121,6 @@ class nusoap_server extends nusoap_base
             $method = array_pop($split);
             $class = implode('\\', $split);
         } else {
-            $try_class = '';
             $this->debug("in invoke_method, no class to try");
         }
 
@@ -4564,6 +4573,9 @@ class nusoap_server extends nusoap_base
                 $HTTPS = isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off';
             } else {
                 $this->setError("Neither _SERVER nor HTTP_SERVER_VARS is available");
+                $HTTPS = '';
+                $SERVER_NAME = '';
+                $SCRIPT_NAME = '';
             }
             if ($HTTPS == '1' || $HTTPS == 'on') {
                 $SCHEME = 'https';
@@ -4646,6 +4658,10 @@ class nusoap_server extends nusoap_base
             $HTTPS = isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off';
         } else {
             $this->setError("Neither _SERVER nor HTTP_SERVER_VARS is available");
+            $SERVER_PORT = '';
+            $SERVER_NAME = '';
+            $SCRIPT_NAME = '';
+            $HTTPS = '';
         }
         // If server name has port number attached then strip it (else port number gets duplicated in WSDL output) (occurred using lighttpd and FastCGI)
         $colon = strpos($SERVER_NAME, ":");
@@ -5057,6 +5073,7 @@ class wsdl extends nusoap_base
                     }
                 }
                 // expand each attribute prefix to its namespace
+                $eAttrs = array ();
                 foreach ($attrs as $k => $v) {
                     $k = strpos($k, ':') ? $this->expandQname($k) : $k;
                     if ($k != 'location' && $k != 'soapAction' && $k != 'namespace') {
@@ -5497,6 +5514,7 @@ class wsdl extends nusoap_base
             $PHP_SELF = $HTTP_SERVER_VARS['PHP_SELF'];
         } else {
             $this->setError("Neither _SERVER nor HTTP_SERVER_VARS is available");
+            $PHP_SELF = '';
         }
 
         $b = '
@@ -6266,6 +6284,7 @@ class wsdl extends nusoap_base
                 $this->debug("in serializeType: returning: $xml");
                 return $xml;
             }
+            $cols = '';
             if (isset($typeDef['multidimensional'])) {
                 $nv = array();
                 foreach ($value as $v) {
@@ -6273,8 +6292,6 @@ class wsdl extends nusoap_base
                     $nv = array_merge($nv, $v);
                 }
                 $value = $nv;
-            } else {
-                $cols = '';
             }
             if (is_array($value) && sizeof($value) >= 1) {
                 $rows = sizeof($value);
@@ -6544,7 +6561,9 @@ class wsdl extends nusoap_base
         }
 
         if (count($attrs) > 0) {
+            $eAttrs = array ();
             foreach ($attrs as $n => $a) {
+                $aa = array ();
                 // expand each attribute
                 foreach ($a as $k => $v) {
                     $k = strpos($k, ':') ? $this->expandQname($k) : $k;
