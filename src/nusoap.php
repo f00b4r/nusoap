@@ -2132,6 +2132,9 @@ class soapval extends nusoap_base
      * @access private
      */
     var $attributes;
+    
+    /** @var false|resource */
+    var $fp;
 
     /**
      * constructor
@@ -2228,6 +2231,9 @@ class soap_transport_http extends nusoap_base
     // certpassword: SSL certificate password
     // verifypeer: default is 1
     // verifyhost: default is 1
+    
+    /** @var false|resource */
+    var $fp;
 
     /**
      * constructor
@@ -3707,6 +3713,9 @@ class nusoap_server extends nusoap_base
      * @access public
      */
     var $debug_flag = false;
+    
+    /** @var array */
+    var $opData;
 
 
     /**
@@ -4754,6 +4763,13 @@ class wsdl extends nusoap_base
     var $password = '';                // Password for HTTP authentication
     var $authtype = '';                // Type of HTTP authentication
     var $certRequest = array();        // Certificate for HTTP SSL authentication
+    
+    /** @var mixed */
+    var $currentPortOperation;
+    /** @var string */
+    var $opStatus;
+    /** @var mixed */
+    var $serviceName;
 
     /**
      * constructor
@@ -7488,6 +7504,11 @@ class nusoap_client extends nusoap_base
      * @access   public
      */
     var $faultdetail;
+    
+    /** @var wsdl|null */
+    var $wsdl;
+    /** @var mixed */
+    var $wsdlFile;
 
     /**
      * constructor
