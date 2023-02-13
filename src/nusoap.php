@@ -2779,7 +2779,7 @@ class soap_transport_http extends nusoap_base
                 'password' => $proxypassword,
                 'authtype' => $proxyauthtype
             );
-            if ($proxyusername != '' && $proxypassword != '' && $proxyauthtype = 'basic') {
+            if ($proxyusername != '' && $proxypassword != '' && $proxyauthtype == 'basic') {
                 $this->setHeader('Proxy-Authorization', ' Basic ' . base64_encode($proxyusername . ':' . $proxypassword));
             }
         } else {
