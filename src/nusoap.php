@@ -2990,7 +2990,6 @@ class soap_transport_http extends nusoap_base
                 $this->setCurlOption(CURLOPT_POST, 1);
                 $this->setCurlOption(CURLOPT_POSTFIELDS, $data);
                 $this->debug('set cURL POST data');
-            } else {
             }
             // insert custom user-set cURL options
             foreach ($this->ch_options as $key => $val) {
@@ -3198,10 +3197,6 @@ class soap_transport_http extends nusoap_base
                 $this->setError($err);
                 curl_close($this->ch);
                 return false;
-            } else {
-                //echo '<pre>';
-                //var_dump(curl_getinfo($this->ch));
-                //echo '</pre>';
             }
             // close curl
             $this->debug('No cURL error, closing cURL');
@@ -4572,8 +4567,6 @@ class nusoap_server extends nusoap_base
         }
         if (!is_array($out)) {
             die('You must provide an array for operation outputs');
-        }
-        if (!$namespace) {
         }
         if (!$soapaction) {
             if (isset($_SERVER)) {
@@ -6497,18 +6490,28 @@ class wsdl extends nusoap_base
                             }
                         }
                     } else {
-                        if (is_null($v) && isset($attrs['minOccurs']) && $attrs['minOccurs'] == '0') {
-                            // do nothing
-                        } elseif (is_null($v) && isset($attrs['nillable']) && $attrs['nillable'] == 'true') {
-                            // TODO: serialize a nil correctly, but for now serialize schema-defined type
-                            $xml .= $this->serializeType($eName, isset($attrs['type']) ? $attrs['type'] : $attrs['ref'], $v, $use, $encodingStyle, $unqualified);
-                        } elseif (isset($attrs['type']) || isset($attrs['ref'])) {
-                            // serialize schema-defined type
-                            $xml .= $this->serializeType($eName, isset($attrs['type']) ? $attrs['type'] : $attrs['ref'], $v, $use, $encodingStyle, $unqualified);
-                        } else {
-                            // serialize generic type (can this ever really happen?)
-                            $this->debug("calling serialize_val() for $v, $eName, false, false, false, false, $use");
-                            $xml .= $this->serialize_val($v, $eName, false, false, false, false, $use);
+                        if (!is_null ($v) || !isset($attrs['minOccurs']) || $attrs['minOccurs'] != '0')
+                        {
+                            if (is_null ($v) && isset($attrs['nillable']) && $attrs['nillable'] == 'true')
+                            {
+                                // TODO: serialize a nil correctly, but for now serialize schema-defined type
+                                $xml .= $this->serializeType ($eName,
+                                                              isset($attrs['type']) ? $attrs['type'] : $attrs['ref'],
+                                                              $v, $use, $encodingStyle, $unqualified);
+                            }
+                            elseif (isset($attrs['type']) || isset($attrs['ref']))
+                            {
+                                // serialize schema-defined type
+                                $xml .= $this->serializeType ($eName,
+                                                              isset($attrs['type']) ? $attrs['type'] : $attrs['ref'],
+                                                              $v, $use, $encodingStyle, $unqualified);
+                            }
+                            else
+                            {
+                                // serialize generic type (can this ever really happen?)
+                                $this->debug ("calling serialize_val() for $v, $eName, false, false, false, false, $use");
+                                $xml .= $this->serialize_val ($v, $eName, false, false, false, false, $use);
+                            }
                         }
                     }
                 }
@@ -6996,16 +6999,18 @@ class nusoap_parser extends nusoap_base
                 }
                 // if it's a type declaration, set type
             } elseif ($key_localpart == 'type') {
-                if (isset($this->message[$pos]['type']) && $this->message[$pos]['type'] == 'array') {
-                    // do nothing: already processed arrayType
-                } else {
-                    $value_prefix = $this->getPrefix($value);
-                    $value_localpart = $this->getLocalPart($value);
+                if (!isset($this->message[$pos]['type']) || $this->message[$pos]['type'] != 'array')
+                {
+                    $value_prefix = $this->getPrefix ($value);
+                    $value_localpart = $this->getLocalPart ($value);
                     $this->message[$pos]['type'] = $value_localpart;
                     $this->message[$pos]['typePrefix'] = $value_prefix;
-                    if (isset($this->namespaces[$value_prefix])) {
+                    if (isset($this->namespaces[$value_prefix]))
+                    {
                         $this->message[$pos]['type_namespace'] = $this->namespaces[$value_prefix];
-                    } elseif (isset($attrs['xmlns:' . $value_prefix])) {
+                    }
+                    elseif (isset($attrs['xmlns:' . $value_prefix]))
+                    {
                         $this->message[$pos]['type_namespace'] = $attrs['xmlns:' . $value_prefix];
                     }
                     // should do something here with the namespace of specified type?
