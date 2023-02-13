@@ -12,7 +12,11 @@
     }
   ],
   "require": {
-    "php": ">=5.4"
+    "php": ">=5.4",
+    "ext-xml": "*",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-zlib": "*"
   },
   "require-dev": {
     "php-parallel-lint/php-parallel-lint": "~1.2.0"
