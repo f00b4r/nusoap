@@ -478,8 +478,6 @@ class nusoap_base
             if ($use == 'literal') {
                 // TODO: depends on minOccurs
                 $xml = "<$name$xmlns$atts/>";
-                $this->debug("serialize_val returning $xml");
-                return $xml;
             } else {
                 if (isset($type) && isset($type_prefix)) {
                     $type_str = " xsi:type=\"$type_prefix:$type\"";
@@ -487,9 +485,9 @@ class nusoap_base
                     $type_str = '';
                 }
                 $xml = "<$name$xmlns$type_str$atts xsi:nil=\"true\"/>";
-                $this->debug("serialize_val returning $xml");
-                return $xml;
             }
+            $this->debug("serialize_val returning $xml");
+            return $xml;
         }
         // serialize if an xsd built-in primitive type
         if ($type != '' && isset($this->typemap[$this->XMLSchemaVersion][$type])) {
@@ -505,13 +503,11 @@ class nusoap_base
             }
             if ($use == 'literal') {
                 $xml = "<$name$xmlns$atts>$val</$name>";
-                $this->debug("serialize_val returning $xml");
-                return $xml;
             } else {
                 $xml = "<$name$xmlns xsi:type=\"xsd:$type\"$atts>$val</$name>";
-                $this->debug("serialize_val returning $xml");
-                return $xml;
             }
+            $this->debug("serialize_val returning $xml");
+            return $xml;
         }
         // detect type and serialize
         $xml = '';
@@ -777,10 +773,8 @@ class nusoap_base
             if ($p) {
                 return $p . ':' . $name;
             }
-            return $qname;
-        } else {
-            return $qname;
         }
+        return $qname;
     }
 
     /**
@@ -1432,41 +1426,26 @@ class nusoap_xmlschema extends nusoap_base
                     $this->xdebug('processing named complexType ' . $attrs['name']);
                     //$this->currentElement = false;
                     $this->currentComplexType = $attrs['name'];
-                    $this->complexTypes[$this->currentComplexType] = $attrs;
-                    $this->complexTypes[$this->currentComplexType]['typeClass'] = 'complexType';
-                    // This is for constructs like
-                    //           <complexType name="ListOfString" base="soap:Array">
-                    //                <sequence>
-                    //                    <element name="string" type="xsd:string"
-                    //                        minOccurs="0" maxOccurs="unbounded" />
-                    //                </sequence>
-                    //            </complexType>
-                    if (isset($attrs['base']) && preg_match('/:Array$/', $attrs['base'])) {
-                        $this->xdebug('complexType is unusual array');
-                        $this->complexTypes[$this->currentComplexType]['phpType'] = 'array';
-                    } else {
-                        $this->complexTypes[$this->currentComplexType]['phpType'] = 'struct';
-                    }
                 } else {
                     $name = $this->CreateTypeName($this->currentElement);
                     $this->xdebug('processing unnamed complexType for element ' . $this->currentElement . ' named ' . $name);
                     $this->currentComplexType = $name;
                     //$this->currentElement = false;
-                    $this->complexTypes[$this->currentComplexType] = $attrs;
-                    $this->complexTypes[$this->currentComplexType]['typeClass'] = 'complexType';
-                    // This is for constructs like
-                    //           <complexType name="ListOfString" base="soap:Array">
-                    //                <sequence>
-                    //                    <element name="string" type="xsd:string"
-                    //                        minOccurs="0" maxOccurs="unbounded" />
-                    //                </sequence>
-                    //            </complexType>
-                    if (isset($attrs['base']) && preg_match('/:Array$/', $attrs['base'])) {
-                        $this->xdebug('complexType is unusual array');
-                        $this->complexTypes[$this->currentComplexType]['phpType'] = 'array';
-                    } else {
-                        $this->complexTypes[$this->currentComplexType]['phpType'] = 'struct';
-                    }
+                }
+                $this->complexTypes[$this->currentComplexType] = $attrs;
+                $this->complexTypes[$this->currentComplexType]['typeClass'] = 'complexType';
+                // This is for constructs like
+                //           <complexType name="ListOfString" base="soap:Array">
+                //                <sequence>
+                //                    <element name="string" type="xsd:string"
+                //                        minOccurs="0" maxOccurs="unbounded" />
+                //                </sequence>
+                //            </complexType>
+                if (isset($attrs['base']) && preg_match('/:Array$/', $attrs['base'])) {
+                    $this->xdebug('complexType is unusual array');
+                    $this->complexTypes[$this->currentComplexType]['phpType'] = 'array';
+                } else {
+                    $this->complexTypes[$this->currentComplexType]['phpType'] = 'struct';
                 }
                 $this->complexTypes[$this->currentComplexType]['simpleContent'] = 'false';
                 break;
@@ -7417,7 +7396,6 @@ class nusoap_parser extends nusoap_base
             $ret = is_array($params) ? $params : array();
             $this->debug('in buildVal, return:');
             $this->appendDebug($this->varDump($ret));
-            return $ret;
         } else {
             $this->debug('in buildVal, no children, building scalar');
             $cdata = isset($this->message[$pos]['cdata']) ? $this->message[$pos]['cdata'] : '';
@@ -7434,8 +7412,9 @@ class nusoap_parser extends nusoap_base
             }
             $ret = $this->message[$pos]['cdata'];
             $this->debug("in buildVal, return: $ret");
-            return $ret;
         }
+    
+        return $ret;
     }
 }
 
@@ -8243,10 +8222,10 @@ class nusoap_client extends nusoap_base
         $evalStr = '';
         foreach ($this->operations as $operation => $opData) {
             if ($operation != '') {
+                $paramStr = '';
+                $paramArrayStr = '';
                 // create param string and param comment string
                 if (sizeof($opData['input']['parts']) > 0) {
-                    $paramStr = '';
-                    $paramArrayStr = '';
                     $paramCommentStr = '';
                     foreach ($opData['input']['parts'] as $name => $type) {
                         $paramStr .= "\$$name, ";
@@ -8257,8 +8236,6 @@ class nusoap_client extends nusoap_base
                     $paramArrayStr = substr($paramArrayStr, 0, strlen($paramArrayStr) - 2);
                     $paramCommentStr = substr($paramCommentStr, 0, strlen($paramCommentStr) - 2);
                 } else {
-                    $paramStr = '';
-                    $paramArrayStr = '';
                     $paramCommentStr = 'void';
                 }
                 $opData['namespace'] = !isset($opData['namespace']) ? 'http://testuri.com' : $opData['namespace'];
