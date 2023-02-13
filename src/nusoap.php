@@ -6277,7 +6277,6 @@ class wsdl extends nusoap_base
             } else {
                 $this->debug("in serializeType: phpType is struct, but value is not an array");
                 $this->setError("phpType is struct, but value is not an array: see debug output for details");
-                $xml = '';
             }
         } elseif ($phpType == 'array') {
             if (isset($typeDef['form']) && ($typeDef['form'] == 'qualified')) {
