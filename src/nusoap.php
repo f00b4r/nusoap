@@ -8237,7 +8237,7 @@ class nusoap_client extends nusoap_base
   
           return "echo \"$evalStr\";";
         }
-        if ($this->endpointType == 'wsdl' && is_null($this->wsdl)) {
+        if (is_null($this->wsdl)) {
             $this->loadWSDL();
             if ($this->getError()) {
                 return "echo \"" . $this->getError() . "\";";
