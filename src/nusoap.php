@@ -3025,6 +3025,7 @@ class soap_transport_http extends nusoap_base
             $this->debug('set cURL payload');
             return true;
         }
+        return false;
     }
 
     /**
@@ -5342,6 +5343,7 @@ class wsdl extends nusoap_base
         if (is_array($this->bindings[$binding])) {
             return $this->bindings[$binding];
         }
+        return false;
     }
 
     /**
@@ -5415,6 +5417,7 @@ class wsdl extends nusoap_base
                 }
             }
         }
+        return array ();
     }
 
     /**
@@ -5444,6 +5447,7 @@ class wsdl extends nusoap_base
                 }
             }
         }
+        return array ();
     }
 
     /**
@@ -7844,7 +7848,7 @@ class nusoap_client extends nusoap_base
      * get available data pertaining to an operation
      *
      * @param    string $operation operation name
-     * @return    array array of data pertaining to the operation
+     * @return   array|false array of data pertaining to the operation, false on error or no data
      * @access   public
      */
     function getOperationData($operation)
@@ -7859,6 +7863,7 @@ class nusoap_client extends nusoap_base
             return $this->operations[$operation];
         }
         $this->debug("No data for operation: $operation");
+        return false;
     }
 
     /**
