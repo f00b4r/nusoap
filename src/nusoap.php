@@ -583,7 +583,6 @@ class nusoap_base
                     $xml .= "<$name$xmlns$type_str$atts>$pXml</$name>";
                 }
                 break;
-                break;
             case (is_array($val) || $type):
                 // detect if struct or array
                 $valueType = $this->isArraySimpleOrStruct($val);
@@ -7938,11 +7937,9 @@ class nusoap_client extends nusoap_base
                     $this->debug('got response, length=' . strlen($this->responseData) . ' type=' . $http->incoming_headers['content-type']);
                     return $this->parseResponse($http->incoming_headers, $this->responseData);
                 }
-                break;
             default:
                 $this->setError('no transport found, or selected transport is not yet supported!');
                 return false;
-                break;
         }
     }
 
