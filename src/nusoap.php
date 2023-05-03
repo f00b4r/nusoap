@@ -7691,7 +7691,7 @@ class nusoap_client extends nusoap_base
             // serialize
             $payload = '';
 
-            if ($use = 'literal wrapped') {
+            if ($use == 'literal wrapped') {
                 // 'literal wrapped' is only sensible (and defined) for 'document'.
                 if ($style == 'document') {
                     $usewrapped = true;
