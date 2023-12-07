@@ -3842,7 +3842,7 @@ class nusoap_server extends nusoap_base
                 }
             } elseif ($this->wsdl) {
                 $this->debug("In service, serialize WSDL");
-                header("Content-Type: text/xml; charset=ISO-8859-1\r\n");
+                header("Content-Type: text/xml; charset={$this->soap_defencoding}\r\n");
                 print $this->wsdl->serialize($this->debug_flag);
                 if ($this->debug_flag) {
                     $this->debug('wsdl:');
@@ -3851,7 +3851,7 @@ class nusoap_server extends nusoap_base
                 }
             } else {
                 $this->debug("In service, there is no WSDL");
-                header("Content-Type: text/html; charset=ISO-8859-1\r\n");
+                header("Content-Type: text/html; charset={$this->soap_defencoding}\r\n");
                 print "This service does not provide WSDL";
             }
         } elseif ($this->wsdl) {
@@ -3859,7 +3859,7 @@ class nusoap_server extends nusoap_base
             print $this->wsdl->webDescription();
         } else {
             $this->debug("In service, no Web description");
-            header("Content-Type: text/html; charset=ISO-8859-1\r\n");
+            header("Content-Type: text/html; charset={$this->soap_defencoding}\r\n");
             print "This service does not provide a Web description";
         }
     }
@@ -4692,6 +4692,7 @@ class nusoap_server extends nusoap_base
 
         $this->wsdl = new wsdl;
         $this->wsdl->serviceName = $serviceName;
+        $this->wsdl->soap_defencoding = $this->soap_defencoding;
         $this->wsdl->endpoint = $endpoint;
         $this->wsdl->namespaces['tns'] = $namespace;
         $this->wsdl->namespaces['soap'] = 'http://schemas.xmlsoap.org/wsdl/soap/';
@@ -5642,7 +5643,7 @@ class wsdl extends nusoap_base
      */
     function serialize($debug = 0)
     {
-        $xml = '<?xml version="1.0" encoding="ISO-8859-1"?>';
+        $xml = '<?xml version="1.0" encoding="' . $this->soap_defencoding . '"?>';
         $xml .= "\n<definitions";
         foreach ($this->namespaces as $k => $v) {
             $xml .= " xmlns:$k=\"$v\"";
