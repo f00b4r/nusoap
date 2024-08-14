@@ -3268,7 +3268,7 @@ class soap_transport_http extends nusoap_base
         $http_reason = count($arr) > 2 ? $arr[2] : '';
 
         // see if we need to resend the request with http digest authentication
-        if (isset($this->incoming_headers['location']) && ($http_status == 301 || $http_status == 302)) {
+        if (isset($this->incoming_headers['location']) && ($http_status == 301 || $http_status == 302 || $http_status == 307)) {
             $this->debug("Got $http_status $http_reason with Location: " . $this->incoming_headers['location']);
             $this->setURL($this->incoming_headers['location']);
             $this->tryagain = true;
