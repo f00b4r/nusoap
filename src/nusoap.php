@@ -6843,7 +6843,7 @@ class nusoap_parser extends nusoap_base
                 $substrXml = $xml;
                 foreach($this->attachments as $key => $attachment) {
                     $startPos = max(
-                        stripos($substrXml, $attachment['boundaryStr']),
+                        isset($attachment['boundaryStr']) ? stripos($substrXml, $attachment['boundaryStr']) : false,
                         (array_key_exists('Content-Type', $attachment) ? stripos($substrXml, $attachment['Content-Type']) : 0),
                         (array_key_exists('Content-Id', $attachment) ? stripos($substrXml, $attachment['Content-Id']) : 0),
                         (array_key_exists('Content-Transfer-Encoding', $attachment) ? stripos($substrXml, $attachment['Content-Transfer-Encoding']) : 0)
