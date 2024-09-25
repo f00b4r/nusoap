@@ -6068,7 +6068,7 @@ class wsdl extends nusoap_base
             }
             $attrs = $value->attributes;
             $value = $value->value;
-            $this->debug("in serializeType: soapval overrides value to $value");
+            $this->debug("in serializeType: soapval overrides value to " . $this->varDump($value));
             if ($attrs) {
                 if (!is_array($value)) {
                     $value['!'] = $value;
